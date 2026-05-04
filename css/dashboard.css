@@ -1,0 +1,273 @@
+/* Dashboard Styles */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto auto;
+    gap: 24px;
+}
+
+/* KPI Widgets */
+.kpi-row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+.kpi-card {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.kpi-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.kpi-title i {
+    width: 18px;
+    height: 18px;
+}
+
+.kpi-value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.kpi-value {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.kpi-trend {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.trend-up { color: var(--neon-green); }
+.trend-down { color: #ff4d4f; }
+
+/* SVG Sparklines */
+.sparkline-container {
+    width: 100%;
+    height: 60px;
+    margin-top: 8px;
+}
+
+.sparkline-path {
+    fill: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    /* Glow effect via CSS filter */
+}
+
+/* Specific KPI Colors */
+.kpi-candidates .kpi-title i { color: var(--neon-green); }
+.kpi-candidates .sparkline-path { stroke: var(--neon-green); filter: drop-shadow(0 0 8px rgba(0,255,136,0.6)); }
+.kpi-candidates::after { background: radial-gradient(circle at bottom right, rgba(0,255,136,0.1) 0%, transparent 70%); }
+
+.kpi-jobs .kpi-title i { color: var(--neon-blue); }
+.kpi-jobs .sparkline-path { stroke: var(--neon-blue); filter: drop-shadow(0 0 8px rgba(58,134,255,0.6)); }
+.kpi-jobs::after { background: radial-gradient(circle at bottom right, rgba(58,134,255,0.1) 0%, transparent 70%); }
+
+.kpi-apps .kpi-title i { color: var(--neon-purple); }
+.kpi-apps .sparkline-path { stroke: var(--neon-purple); filter: drop-shadow(0 0 8px rgba(181,55,242,0.6)); }
+.kpi-apps::after { background: radial-gradient(circle at bottom right, rgba(181,55,242,0.1) 0%, transparent 70%); }
+
+.kpi-interviews .kpi-title i { color: var(--neon-cyan); }
+.kpi-interviews .sparkline-path { stroke: var(--neon-cyan); filter: drop-shadow(0 0 8px rgba(0,240,255,0.6)); }
+.kpi-interviews::after { background: radial-gradient(circle at bottom right, rgba(0,240,255,0.1) 0%, transparent 70%); }
+
+.kpi-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Main Dashboard Grid areas */
+.insights-chart { grid-column: span 2; padding: 24px; display: flex; flex-direction: column; }
+.pipeline-health { grid-column: span 1; padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;}
+.ai-matches { grid-column: span 1; grid-row: span 2; padding: 20px; }
+
+/* Section Titles */
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Time to Hire Chart mockup */
+.chart-container {
+    flex: 1;
+    width: 100%;
+    margin-top: 20px;
+    position: relative;
+    background: repeating-linear-gradient(to bottom, transparent, transparent 19%, rgba(255,255,255,0.05) 20%);
+}
+.chart-svg { width: 100%; height: 100%; overflow: visible; }
+.line-cyan { stroke: var(--neon-cyan); fill: none; stroke-width: 3; filter: drop-shadow(0 0 10px rgba(0,240,255,0.5)); }
+.line-purple { stroke: var(--neon-purple); fill: none; stroke-width: 3; filter: drop-shadow(0 0 10px rgba(181,55,242,0.5)); }
+.line-green { stroke: var(--neon-green); fill: none; stroke-width: 3; filter: drop-shadow(0 0 10px rgba(0,255,136,0.5)); }
+
+/* Pipeline Health Donut */
+.donut-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.donut-text {
+    position: absolute;
+    text-align: center;
+}
+
+.donut-text h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.donut-text span {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.donut-svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+.donut-ring {
+    fill: none;
+    stroke-width: 14;
+    stroke-linecap: round;
+}
+
+.donut-bg { stroke: rgba(255, 255, 255, 0.05); }
+.donut-segment-1 { stroke: var(--neon-cyan); stroke-dasharray: 400; stroke-dashoffset: 120; filter: drop-shadow(0 0 10px rgba(0,240,255,0.4)); }
+.donut-segment-2 { stroke: var(--neon-purple); stroke-dasharray: 400; stroke-dashoffset: 300; filter: drop-shadow(0 0 10px rgba(181,55,242,0.4)); }
+.donut-segment-3 { stroke: var(--neon-green); stroke-dasharray: 400; stroke-dashoffset: 350; filter: drop-shadow(0 0 10px rgba(0,255,136,0.4)); }
+
+.pipeline-legend {
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.legend-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.legend-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+.dot-cyan { background: var(--neon-cyan); box-shadow: 0 0 8px var(--neon-cyan); }
+.dot-purple { background: var(--neon-purple); box-shadow: 0 0 8px var(--neon-purple); }
+.dot-green { background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
+
+/* AI Matches List */
+.list-group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.match-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.match-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.match-info {
+    flex: 1;
+}
+
+.match-info h4 {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.match-info p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.match-score {
+    text-align: right;
+}
+
+.match-score .score {
+    color: var(--neon-green);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.match-score .view-profile {
+    font-size: 0.8rem;
+    color: var(--neon-cyan);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.match-score .view-profile:hover {
+    text-decoration: underline;
+}
+
+/* Add spin class for loading */
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}

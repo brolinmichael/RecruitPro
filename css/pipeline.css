@@ -1,0 +1,300 @@
+/* Job Details / Pipeline Screen Styles */
+.pipeline-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 32px;
+    height: 100%;
+}
+
+/* Left Sidebar - Job Description */
+.job-desc-sidebar {
+    padding-right: 32px;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.job-desc-sidebar h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.job-title-large {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.job-location-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.job-location-status i {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.status-active {
+    background: rgba(0, 255, 136, 0.1);
+    color: var(--neon-green);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    border: 1px solid rgba(0, 255, 136, 0.2);
+}
+
+.desc-section h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.desc-section p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.desc-section ul {
+    list-style-position: inside;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.desc-section ul li::marker {
+    color: var(--neon-cyan);
+}
+
+/* Right Area - Kanban Pipeline */
+.pipeline-main {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.job-details-top {
+    margin-bottom: 16px;
+}
+
+.job-details-top h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.pipeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pipeline-header h4 {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.kanban-board {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 24px;
+    flex: 1;
+}
+
+/* Kanban Column Wrapper */
+.kanban-column {
+    min-width: 280px;
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.kanban-col-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.kanban-col-title {
+    display: flex;
+    flex-direction: column;
+}
+
+.kanban-col-title h4 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 2px;
+    color: #fff;
+}
+
+.kanban-col-title span {
+    font-size: 0.75rem;
+}
+
+.col-count {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Column Specific Colors based on image hex codes */
+.col-applied { background: rgba(50, 211, 238, 0.1); border-color: rgba(50, 211, 238, 0.2); }
+.col-applied .kanban-col-title h4, .col-applied .kanban-col-title span { color: #32D3EE; }
+.col-applied .col-count { background: rgba(50, 211, 238, 0.2); color: #32D3EE; }
+.col-applied .check-icon { color: #32D3EE; }
+
+.col-screening { background: rgba(248, 191, 36, 0.1); border-color: rgba(248, 191, 36, 0.2); }
+.col-screening .kanban-col-title h4, .col-screening .kanban-col-title span { color: #F8BF24; }
+.col-screening .col-count { background: rgba(248, 191, 36, 0.2); color: #F8BF24; }
+.col-screening .check-icon { color: #F8BF24; }
+
+.col-interview { background: rgba(129, 140, 248, 0.1); border-color: rgba(129, 140, 248, 0.2); }
+.col-interview .kanban-col-title h4, .col-interview .kanban-col-title span { color: #818CF8; }
+.col-interview .col-count { background: rgba(129, 140, 248, 0.2); color: #818CF8; }
+.col-interview .check-icon { color: #818CF8; }
+
+.col-offer { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.2); }
+.col-offer .kanban-col-title h4, .col-offer .kanban-col-title span { color: #10B981; }
+.col-offer .col-count { background: rgba(16, 185, 129, 0.2); color: #10B981; }
+.col-offer .check-icon { color: #10B981; }
+
+.col-hired { background: rgba(74, 222, 128, 0.1); border-color: rgba(74, 222, 128, 0.2); }
+.col-hired .kanban-col-title h4, .col-hired .kanban-col-title span { color: #4ADE80; }
+.col-hired .col-count { background: rgba(74, 222, 128, 0.2); color: #4ADE80; }
+.col-hired .check-icon { color: #4ADE80; }
+
+/* Candidate Card */
+.candidate-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 12px;
+    cursor: grab;
+    transition: var(--transition-fast);
+}
+
+.candidate-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.card-header img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+
+.card-header i {
+    color: var(--text-secondary);
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.card-info h5 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #fff;
+}
+
+.card-info p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.card-score {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.card-score .score-label {
+    color: var(--text-secondary);
+}
+
+.card-score .score-val {
+    font-weight: 600;
+    color: #fff !important;
+}
+
+.card-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.card-tags span {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 0.75rem;
+    color: #fff;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card-footer-icons {
+    display: flex;
+    gap: 12px;
+}
+
+.card-footer i {
+    width: 14px;
+    height: 14px;
+    color: var(--text-secondary);
+}

@@ -1,0 +1,253 @@
+/* Calendar Screen Styles */
+.calendar-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.calendar-main {
+    display: flex;
+    flex-direction: column;
+    padding: 24px 24px 0 24px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.calendar-month {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.calendar-month h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.calendar-nav-btns {
+    display: flex;
+    gap: 8px;
+}
+
+.calendar-nav-btns button {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.calendar-nav-btns button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.calendar-view-toggle {
+    display: flex;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.calendar-view-toggle button {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.calendar-view-toggle button.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+
+/* Grid */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    flex: 1;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.calendar-day-header {
+    padding: 12px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.calendar-day {
+    min-height: 100px;
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 8px;
+    position: relative;
+}
+
+.calendar-day:nth-child(7n) { border-right: none; }
+.calendar-day.prev-month { color: var(--text-secondary); opacity: 0.5; }
+
+.day-number {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.day-active .day-number {
+    background: rgba(0, 240, 255, 0.1);
+    color: var(--neon-cyan);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+}
+
+.day-active {
+    background: linear-gradient(180deg, rgba(0, 240, 255, 0.05) 0%, transparent 100%);
+}
+
+/* Event Cards */
+.cal-event {
+    margin-top: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    position: relative;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.cal-event:hover {
+    transform: translateY(-2px);
+}
+
+.cal-event-cyan {
+    background: rgba(0, 240, 255, 0.1);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+}
+
+.cal-event-cyan .event-time { color: var(--neon-cyan); font-weight: 600; }
+
+.cal-event-purple {
+    background: rgba(181, 55, 242, 0.1);
+    border: 1px solid rgba(181, 55, 242, 0.3);
+    box-shadow: 0 0 10px rgba(181, 55, 242, 0.1);
+}
+
+.cal-event-purple .event-time { color: var(--neon-purple); font-weight: 600; }
+
+.event-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 4px;
+}
+
+.event-details img {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+/* Today's Interviews Sidebar (now above calendar) */
+.calendar-sidebar {
+    padding: 24px 24px 0 24px;
+    background: transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 24px;
+}
+
+.sidebar-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.sidebar-header p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    margin-bottom: 16px;
+}
+
+.interviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.interview-card {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.interview-card-header {
+    display: flex;
+    gap: -8px; /* Overlap avatars slightly */
+}
+
+.interview-card-header img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-panel);
+}
+
+.interview-card-header img:nth-child(2) {
+    margin-left: -12px;
+}
+
+.interview-info h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.interview-info p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.interview-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.interview-meta span { color: var(--text-primary); }
+
+.interview-actions {
+    margin-top: 4px;
+}
+
+.interview-actions button {
+    width: 100%;
+}
