@@ -276,19 +276,19 @@
                             </div>
                         </div>
                         
-                        <div class="section-title" style="margin-top: 32px;">Recent Activity <i data-lucide="more-vertical" class="text-secondary"></i></div>
+                        <div class="section-title" style="margin-top: 16px;">Recent Activity <i data-lucide="more-vertical" class="text-secondary"></i></div>
                         <div class="list-group">
                             <div class="match-item">
                                 <img src="https://ui-avatars.com/api/?name=Liam+C&background=random" class="avatar" alt="Liam">
                                 <div class="match-info">
-                                    <p style="color: var(--text-primary); font-size: 0.85rem;">Liam Carter interviewed for Lead Analyst.</p>
+                                    <p style="color: var(--text-primary); font-size: 0.75rem;">Liam Carter interviewed for Lead Analyst.</p>
                                     <p>5m ago</p>
                                 </div>
                             </div>
                             <div class="match-item">
                                 <img src="https://ui-avatars.com/api/?name=Emma+W&background=random" class="avatar" alt="Emma">
                                 <div class="match-info">
-                                    <p style="color: var(--text-primary); font-size: 0.85rem;">New Application: Emma Wilson for UX Researcher.</p>
+                                    <p style="color: var(--text-primary); font-size: 0.75rem;">New Application: Emma Wilson for UX Researcher.</p>
                                     <p>12m ago</p>
                                 </div>
                             </div>
@@ -297,7 +297,10 @@
                 </div>
             </div>
             <div id="jobs-screen" class="page-view" style="display: none;">
-                <div class="section-title">Recent Insights</div>
+                    <div class="action-bar" style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+                        <button class="btn-action-cyan"><i data-lucide="plus"></i> Create New Job</button>
+                    </div>
+                    <div class="section-title">Recent Insights</div>
                 <div class="insights-grid">
                     <div class="glass-panel insight-card">
                         <div class="insight-header"><h3>Total Job Openings</h3></div>
@@ -465,52 +468,6 @@
             </div>
             <div id="calendar-screen" class="page-view" style="display: none;">
                 <div class="calendar-layout">
-                    <!-- Today's Interviews Sidebar (Moved to top) -->
-                    <div class="calendar-sidebar">
-                        <div class="sidebar-header">
-                            <h3>Today's Interviews</h3>
-                            <p>Wednesday, Nov 29, 2023</p>
-                        </div>
-
-                        <div class="interviews-grid">
-                            <div class="glass-panel interview-card">
-                                <span class="text-secondary" style="font-size:0.8rem;">1.</span>
-                                <div class="interview-card-header">
-                                    <img src="https://ui-avatars.com/api/?name=Liam+C&background=random" alt="Candidate">
-                                    <img src="https://ui-avatars.com/api/?name=Sarah+J&background=random" alt="Interviewer">
-                                </div>
-                                <div class="interview-info">
-                                    <h4>10:00 AM - Liam Chen</h4>
-                                    <p>Senior Product Designer</p>
-                                </div>
-                                <div class="interview-meta">
-                                    <div>Interviewer - <span>Onsite</span></div>
-                                </div>
-                                <div class="interview-actions">
-                                    <button class="btn-primary" style="background: rgba(255,255,255,0.02);">Interview Details</button>
-                                </div>
-                            </div>
-
-                            <div class="glass-panel interview-card">
-                                <span class="text-secondary" style="font-size:0.8rem;">2.</span>
-                                <div class="interview-card-header">
-                                    <img src="https://ui-avatars.com/api/?name=Aisha+K&background=random" alt="Candidate">
-                                    <img src="https://ui-avatars.com/api/?name=David+K&background=random" alt="Interviewer">
-                                </div>
-                                <div class="interview-info">
-                                    <h4>1:30 PM - Aisha Khan</h4>
-                                    <p>Data Scientist II</p>
-                                </div>
-                                <div class="interview-meta">
-                                    <div>Meeting Links - <span class="text-cyan">Video Call</span></div>
-                                </div>
-                                <div class="interview-actions">
-                                    <button class="btn-primary" style="background: rgba(255,255,255,0.02);">Join Call</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Main Calendar Area -->
                     <div class="calendar-main">
                         <div class="calendar-header">
@@ -618,10 +575,65 @@
                         </div>
                     </div>
 
+                    <!-- Today's Interviews Sidebar (Moved to right) -->
+                    <div class="calendar-sidebar">
+                        <div class="sidebar-header">
+                            <h3>Today's Interviews</h3>
+                            <p>Wednesday, Nov 29, 2023</p>
+                        </div>
+
+                        <div class="interviews-grid">
+                            <div class="glass-panel interview-card">
+                                <span class="text-secondary" style="font-size:0.8rem;">1.</span>
+                                <div class="interview-card-header">
+                                    <img src="https://ui-avatars.com/api/?name=Liam+C&background=random" alt="Candidate">
+                                    <img src="https://ui-avatars.com/api/?name=Sarah+J&background=random" alt="Interviewer">
+                                </div>
+                                <div class="interview-info">
+                                    <h4>10:00 AM - Liam Chen</h4>
+                                    <p>Senior Product Designer</p>
+                                </div>
+                                <div class="interview-meta">
+                                    <div>Interviewer - <span>Onsite</span></div>
+                                </div>
+                                <div class="interview-actions">
+                                    <button class="btn-primary" style="background: rgba(255,255,255,0.02);">Interview Details</button>
+                                </div>
+                            </div>
+
+                            <div class="glass-panel interview-card">
+                                <span class="text-secondary" style="font-size:0.8rem;">2.</span>
+                                <div class="interview-card-header">
+                                    <img src="https://ui-avatars.com/api/?name=Aisha+K&background=random" alt="Candidate">
+                                    <img src="https://ui-avatars.com/api/?name=David+K&background=random" alt="Interviewer">
+                                </div>
+                                <div class="interview-info">
+                                    <h4>1:30 PM - Aisha Khan</h4>
+                                    <p>Data Scientist II</p>
+                                </div>
+                                <div class="interview-meta">
+                                    <div>Meeting Links - <span class="text-cyan">Video Call</span></div>
+                                </div>
+                                <div class="interview-actions">
+                                    <button class="btn-primary" style="background: rgba(255,255,255,0.02);">Join Call</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
 
                 </div>
             </div>
             <!-- Pipeline / Job Details Screen -->
+            <style>
+            .action-bar {
+                display: flex;
+                justify-content: flex-end;
+                margin-bottom: 12px;
+                /* Matches spacing of surrounding elements */
+                margin-top: 0; /* ensure no extra top margin */
+            }
+            </style>
             <div id="pipeline-screen" class="page-view" style="display: none;">
                 <div class="pipeline-layout">
                     <!-- Left Sidebar -->

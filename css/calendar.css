@@ -1,16 +1,17 @@
 /* Calendar Screen Styles */
 .calendar-layout {
     display: flex;
-    flex-direction: column;
-    gap: 32px;
+    flex-direction: row;
+    gap: 24px;
     height: 100%;
     overflow-y: auto;
+    padding: 24px;
 }
 
 .calendar-main {
     display: flex;
     flex-direction: column;
-    padding: 24px 24px 0 24px;
+    flex: 1;
 }
 
 .calendar-header {
@@ -172,12 +173,14 @@
     border-radius: 50%;
 }
 
-/* Today's Interviews Sidebar (now above calendar) */
+/* Today's Interviews Sidebar (now right of calendar) */
 .calendar-sidebar {
-    padding: 24px 24px 0 24px;
+    width: 320px;
     background: transparent;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding-bottom: 24px;
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    padding-left: 24px;
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar-header h3 {
@@ -193,8 +196,8 @@
 }
 
 .interviews-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 16px;
 }
 

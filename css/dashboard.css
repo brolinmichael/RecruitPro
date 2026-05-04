@@ -108,13 +108,13 @@
 /* Main Dashboard Grid areas */
 .insights-chart { grid-column: span 2; padding: 24px; display: flex; flex-direction: column; }
 .pipeline-health { grid-column: span 1; padding: 24px; display: flex; flex-direction: column; align-items: center; justify-content: space-between;}
-.ai-matches { grid-column: span 1; grid-row: span 2; padding: 20px; }
+.ai-matches { grid-column: span 1; padding: 24px; display: flex; flex-direction: column; overflow: hidden; }
 
 /* Section Titles */
 .section-title {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -211,14 +211,14 @@
 .list-group {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 }
 
 .match-item {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding-bottom: 16px;
+    gap: 10px;
+    padding-bottom: 12px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -227,17 +227,22 @@
     padding-bottom: 0;
 }
 
+.ai-matches .avatar {
+    width: 32px;
+    height: 32px;
+}
+
 .match-info {
     flex: 1;
 }
 
 .match-info h4 {
-    font-size: 0.95rem;
-    font-weight: 500;
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
 .match-info p {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--text-secondary);
 }
 
@@ -248,11 +253,11 @@
 .match-score .score {
     color: var(--neon-green);
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 .match-score .view-profile {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--neon-cyan);
     text-decoration: none;
     cursor: pointer;
