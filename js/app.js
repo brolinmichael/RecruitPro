@@ -140,6 +140,51 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- KPI Counter Animation (Premium Odometer Style) ---
+    const initKPICounters = () => {
+        const kpiValues = document.querySelectorAll('.kpi-value');
+        
+        kpiValues.forEach(el => {
+            const originalValue = el.textContent.trim();
+            const parts = originalValue.split('');
+            el.innerHTML = ''; // Clear original content
+            
+            parts.forEach((char, index) => {
+                if (/\d/.test(char)) {
+                    const container = document.createElement('div');
+                    container.className = 'digit-container';
+                    
+                    const strip = document.createElement('div');
+                    strip.className = 'digit-strip';
+                    
+                    // Populate 0-9 for the strip
+                    for (let i = 0; i <= 9; i++) {
+                        const span = document.createElement('span');
+                        span.textContent = i;
+                        strip.appendChild(span);
+                    }
+                    
+                    container.appendChild(strip);
+                    el.appendChild(container);
+                    
+                    // Set target position with a more organic staggered timing
+                    const targetDigit = parseInt(char);
+                    setTimeout(() => {
+                        strip.style.transform = `translateY(-${targetDigit * 10}%)`;
+                    }, 400 + (index * 120)); // Increased delay for mechanical feel
+                } else {
+                    const sep = document.createElement('span');
+                    sep.className = 'kpi-separator';
+                    sep.textContent = char;
+                    el.appendChild(sep);
+                }
+            });
+        });
+    };
+
+    // Run initialization
+    initKPICounters();
+
     // Expose navigateTo globally so inline onclick handlers work
     window.navigateTo = navigateTo;
 });

@@ -182,114 +182,206 @@
                         </div>
                     </div>
 
-                    <!-- Global Insights Chart -->
-                    <div class="glass-panel insights-chart">
-                        <div class="section-title">
-                            Global Insights: Time-to-Hire
-                            <div class="btn-group">
-                                <button class="btn-primary" style="padding: 4px 12px; font-size: 0.8rem; border-radius: 4px;">Days</button>
-                                <button class="btn-primary" style="padding: 4px 12px; font-size: 0.8rem; border-radius: 4px; background: transparent;">Months</button>
-                            </div>
+                    <!-- Upcoming Interviews (Wide) -->
+                    <div class="glass-panel dash-upcoming-interviews">
+                        <div class="panel-header">
+                            <h3><i data-lucide="calendar"></i> Upcoming Interviews</h3>
+                            <a href="#" class="view-all">View Schedule</a>
                         </div>
-                        <div class="chart-container">
-                            <svg class="chart-svg" viewBox="0 0 500 200" preserveAspectRatio="none">
-                                <!-- Grid Lines -->
-                                <line x1="0" y1="50" x2="500" y2="50" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-                                <line x1="0" y1="100" x2="500" y2="100" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-                                <line x1="0" y1="150" x2="500" y2="150" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-                                
-                                <!-- Data Lines -->
-                                <path class="line-cyan" d="M 0 150 C 100 120, 150 180, 250 80 C 350 -20, 400 120, 500 100" />
-                                <path class="line-purple" d="M 0 180 C 100 140, 200 150, 250 140 C 350 120, 400 130, 500 120" />
-                                <path class="line-green" d="M 0 160 C 100 160, 200 100, 250 50 C 300 0, 400 100, 500 30" />
+                        <div class="interview-list">
+                            <div class="dash-interview-item">
+                                <div class="time-block">
+                                    <span class="time">10:00</span>
+                                    <span class="period">AM</span>
+                                </div>
+                                <div class="candidate-info">
+                                    <img src="https://ui-avatars.com/api/?name=Sarah+Jenkins&background=random" class="avatar" alt="Sarah">
+                                    <div>
+                                        <h4>Sarah Jenkins</h4>
+                                        <p>Senior UI/UX Designer</p>
+                                    </div>
+                                </div>
+                                <div class="interviewer-info">
+                                    <span class="label">Interviewer</span>
+                                    <span>Alex Rivera</span>
+                                </div>
+                                <div class="status-tag onsite">Onsite</div>
+                                <div class="item-actions">
+                                    <button class="btn-icon-sm" title="View Resume"><i data-lucide="file-text"></i></button>
+                                    <button class="btn-primary-sm">Start Interview</button>
+                                </div>
+                            </div>
+                            
+                            <div class="dash-interview-item">
+                                <div class="time-block">
+                                    <span class="time">01:30</span>
+                                    <span class="period">PM</span>
+                                </div>
+                                <div class="candidate-info">
+                                    <img src="https://ui-avatars.com/api/?name=David+Kim&background=random" class="avatar" alt="David">
+                                    <div>
+                                        <h4>David Kim</h4>
+                                        <p>Full Stack Engineer</p>
+                                    </div>
+                                </div>
+                                <div class="interviewer-info">
+                                    <span class="label">Interviewer</span>
+                                    <span>Michael Chen</span>
+                                </div>
+                                <div class="status-tag video">Video Call</div>
+                                <div class="item-actions">
+                                    <button class="btn-icon-sm" title="Join Link"><i data-lucide="video"></i></button>
+                                    <button class="btn-primary-sm">Join Call</button>
+                                </div>
+                            </div>
 
-                                <!-- Tooltip Mockup -->
-                                <circle cx="250" cy="80" r="4" fill="#fff" filter="drop-shadow(0 0 4px var(--neon-cyan))"/>
-                                <circle cx="250" cy="140" r="4" fill="#fff" filter="drop-shadow(0 0 4px var(--neon-purple))"/>
-                                <circle cx="250" cy="50" r="4" fill="#fff" filter="drop-shadow(0 0 4px var(--neon-green))"/>
-                            </svg>
+                            <div class="dash-interview-item">
+                                <div class="time-block">
+                                    <span class="time">04:00</span>
+                                    <span class="period">PM</span>
+                                </div>
+                                <div class="candidate-info">
+                                    <img src="https://ui-avatars.com/api/?name=Maria+G&background=random" class="avatar" alt="Maria">
+                                    <div>
+                                        <h4>Maria Garcia</h4>
+                                        <p>Product Manager</p>
+                                    </div>
+                                </div>
+                                <div class="interviewer-info">
+                                    <span class="label">Interviewer</span>
+                                    <span>Sarah Jones</span>
+                                </div>
+                                <div class="status-tag screening">Screening</div>
+                                <div class="item-actions">
+                                    <button class="btn-icon-sm"><i data-lucide="more-horizontal"></i></button>
+                                    <button class="btn-primary-sm">Details</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Pipeline Health -->
-                    <div class="glass-panel pipeline-health">
-                        <div class="section-title" style="width: 100%;">Pipeline Health <i data-lucide="more-vertical" class="text-secondary"></i></div>
-                        <div class="donut-container">
-                            <svg class="donut-svg" viewBox="0 0 100 100">
-                                <circle class="donut-ring donut-bg" cx="50" cy="50" r="40" />
-                                <circle class="donut-ring donut-segment-1" cx="50" cy="50" r="40" />
-                                <circle class="donut-ring donut-segment-2" cx="50" cy="50" r="30" />
-                                <circle class="donut-ring donut-segment-3" cx="50" cy="50" r="20" />
-                            </svg>
-                            <div class="donut-text">
-                                <h3>72%</h3>
-                                <span>Healthy</span>
-                            </div>
+                    <!-- Priority Snapshot (Narrow) -->
+                    <div class="glass-panel dash-priority-snapshot">
+                        <div class="panel-header">
+                            <h3><i data-lucide="zap"></i> Smart Alerts</h3>
                         </div>
-                        <div class="pipeline-legend">
-                            <div class="legend-item"><div class="legend-label"><div class="legend-dot dot-cyan"></div>Sourcing</div><span>28%</span></div>
-                            <div class="legend-item"><div class="legend-label"><div class="legend-dot dot-blue" style="background:var(--neon-blue);"></div>Screening</div><span>22%</span></div>
-                            <div class="legend-item"><div class="legend-label"><div class="legend-dot dot-purple"></div>Interviewing</div><span>35%</span></div>
-                            <div class="legend-item"><div class="legend-label"><div class="legend-dot dot-green"></div>Hired</div><span>15%</span></div>
+                        <div class="snapshot-items">
+                            <div class="snapshot-card alert-blue">
+                                <div class="snapshot-icon"><i data-lucide="clipboard-check"></i></div>
+                                <div class="snapshot-data">
+                                    <span class="count">4</span>
+                                    <span class="label">Feedback Needed</span>
+                                </div>
+                                <i data-lucide="chevron-right" class="arrow"></i>
+                            </div>
+                            <div class="snapshot-card alert-purple">
+                                <div class="snapshot-icon"><i data-lucide="send"></i></div>
+                                <div class="snapshot-data">
+                                    <span class="count">2</span>
+                                    <span class="label">Pending Offers</span>
+                                </div>
+                                <i data-lucide="chevron-right" class="arrow"></i>
+                            </div>
+                            <div class="snapshot-card alert-cyan">
+                                <div class="snapshot-icon"><i data-lucide="user-plus"></i></div>
+                                <div class="snapshot-data">
+                                    <span class="count">12</span>
+                                    <span class="label">New High-Matches</span>
+                                </div>
+                                <i data-lucide="chevron-right" class="arrow"></i>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Top AI Matches -->
-                    <div class="glass-panel ai-matches">
-                        <div class="section-title">Top AI Matches <i data-lucide="more-vertical" class="text-secondary"></i></div>
-                        <div class="list-group">
-                            <div class="match-item">
-                                <span class="text-secondary">1</span>
-                                <img src="https://ui-avatars.com/api/?name=Sophia+Chen&background=random" class="avatar" alt="Sophia">
-                                <div class="match-info">
-                                    <h4>Sophia Chen</h4>
-                                    <p>Senior Developer</p>
-                                </div>
-                                <div class="match-score">
-                                    <div class="score">96% Match</div>
-                                    <a class="view-profile">View Profile</a>
+                    <!-- Recent Activity (Medium) -->
+                    <div class="glass-panel dash-recent-activity">
+                        <div class="panel-header">
+                            <h3><i data-lucide="activity"></i> Recent Updates</h3>
+                        </div>
+                        <div class="activity-timeline">
+                            <div class="activity-item">
+                                <div class="activity-dot dot-cyan"></div>
+                                <div class="activity-content">
+                                    <p><strong>Sarah Jenkins</strong> was moved to <span>Final Interview</span> for Senior Designer.</p>
+                                    <span class="timestamp">12 mins ago</span>
                                 </div>
                             </div>
-                            <div class="match-item">
-                                <span class="text-secondary">2</span>
-                                <img src="https://ui-avatars.com/api/?name=David+Kim&background=random" class="avatar" alt="David">
-                                <div class="match-info">
-                                    <h4>David Kim</h4>
-                                    <p>Product Designer</p>
-                                </div>
-                                <div class="match-score">
-                                    <div class="score">92% Match</div>
-                                    <a class="view-profile">View Profile</a>
+                            <div class="activity-item">
+                                <div class="activity-dot dot-purple"></div>
+                                <div class="activity-content">
+                                    <p>Feedback submitted by <strong>Michael C.</strong> for <strong>David Kim</strong>.</p>
+                                    <span class="timestamp">1 hour ago</span>
                                 </div>
                             </div>
-                            <div class="match-item">
-                                <span class="text-secondary">3</span>
-                                <img src="https://ui-avatars.com/api/?name=Maria+Garcia&background=random" class="avatar" alt="Maria">
-                                <div class="match-info">
-                                    <h4>Maria Garcia</h4>
-                                    <p>Marketing Manager</p>
+                            <div class="activity-item">
+                                <div class="activity-dot dot-green"></div>
+                                <div class="activity-content">
+                                    <p><strong>Offer accepted</strong> by <strong>Emma Wilson</strong> for UX Researcher role.</p>
+                                    <span class="timestamp">2 hours ago</span>
                                 </div>
-                                <div class="match-score">
-                                    <div class="score">89% Match</div>
-                                    <a class="view-profile">View Profile</a>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-dot dot-blue"></div>
+                                <div class="activity-content">
+                                    <p>New application received from <strong>James Bond</strong> (94% AI Match).</p>
+                                    <span class="timestamp">4 hours ago</span>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="section-title" style="margin-top: 16px;">Recent Activity <i data-lucide="more-vertical" class="text-secondary"></i></div>
-                        <div class="list-group">
-                            <div class="match-item">
-                                <img src="https://ui-avatars.com/api/?name=Liam+C&background=random" class="avatar" alt="Liam">
-                                <div class="match-info">
-                                    <p style="color: var(--text-primary); font-size: 0.75rem;">Liam Carter interviewed for Lead Analyst.</p>
-                                    <p>5m ago</p>
+                    </div>
+
+                    <!-- Priority Roles Snapshot (Medium) -->
+                    <div class="glass-panel dash-priority-roles">
+                        <div class="panel-header">
+                            <h3><i data-lucide="briefcase"></i> Priority Roles</h3>
+                        </div>
+                        <div class="priority-roles-list">
+                            <div class="priority-role-item">
+                                <div class="role-main">
+                                    <h4>Senior UI/UX Designer</h4>
+                                    <div class="pipeline-mini">
+                                        <div class="p-step active"></div>
+                                        <div class="p-step active"></div>
+                                        <div class="p-step active"></div>
+                                        <div class="p-step"></div>
+                                        <div class="p-step"></div>
+                                    </div>
+                                </div>
+                                <div class="role-stats">
+                                    <span class="count">12</span>
+                                    <span class="label">Active</span>
                                 </div>
                             </div>
-                            <div class="match-item">
-                                <img src="https://ui-avatars.com/api/?name=Emma+W&background=random" class="avatar" alt="Emma">
-                                <div class="match-info">
-                                    <p style="color: var(--text-primary); font-size: 0.75rem;">New Application: Emma Wilson for UX Researcher.</p>
-                                    <p>12m ago</p>
+                            <div class="priority-role-item">
+                                <div class="role-main">
+                                    <h4>Full Stack Engineer</h4>
+                                    <div class="pipeline-mini">
+                                        <div class="p-step active"></div>
+                                        <div class="p-step active"></div>
+                                        <div class="p-step"></div>
+                                        <div class="p-step"></div>
+                                        <div class="p-step"></div>
+                                    </div>
+                                </div>
+                                <div class="role-stats">
+                                    <span class="count">8</span>
+                                    <span class="label">Active</span>
+                                </div>
+                            </div>
+                            <div class="priority-role-item">
+                                <div class="role-main">
+                                    <h4>Backend Developer</h4>
+                                    <div class="pipeline-mini">
+                                        <div class="p-step active"></div>
+                                        <div class="p-step"></div>
+                                        <div class="p-step"></div>
+                                        <div class="p-step"></div>
+                                        <div class="p-step"></div>
+                                    </div>
+                                </div>
+                                <div class="role-stats">
+                                    <span class="count">24</span>
+                                    <span class="label">New</span>
                                 </div>
                             </div>
                         </div>
