@@ -60,6 +60,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Trigger reflow
                     void appContainer.offsetWidth;
                     appContainer.classList.add('active');
+                    
+                    // Start KPI animations when the dashboard first appears
+                    runKPICounters();
                 }, 400); // Wait for fade out
             }, 1000);
         }
@@ -69,6 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const navItems = document.querySelectorAll('.nav-item[data-target]');
     const pageViews = document.querySelectorAll('.page-view');
     const pageTitle = document.getElementById('page-title');
+    const backButton = document.getElementById('back-button');
+    
+    let navHistory = [];
 
     const titles = {
         'dashboard-screen': 'Main Dashboard',
@@ -80,7 +86,22 @@ document.addEventListener('DOMContentLoaded', () => {
         'settings-screen': 'Settings'
     };
 
-    const navigateTo = (targetId) => {
+    const navigateTo = (targetId, isBack = false) => {
+        const currentActive = document.querySelector('.page-view.active');
+        const currentId = currentActive ? currentActive.id : null;
+
+        if (!isBack && currentId && currentId !== targetId) {
+            navHistory.push(currentId);
+        }
+
+        // Show/Hide Back Button
+        if (targetId === 'dashboard-screen') {
+            backButton.style.display = 'none';
+            navHistory = []; // Reset history on dashboard
+        } else {
+            backButton.style.display = 'flex';
+        }
+
         // Remove active from all nav items
         navItems.forEach(nav => nav.classList.remove('active'));
         
@@ -103,11 +124,30 @@ document.addEventListener('DOMContentLoaded', () => {
             // Trigger reflow for animation
             void targetPage.offsetWidth;
             targetPage.classList.add('active');
+
+            // Re-run counters if entering dashboard
+            if (targetId === 'dashboard-screen') {
+                runKPICounters();
+            }
         }
 
         // Update title
         pageTitle.textContent = titles[targetId] || 'RecruitHub';
+        
+        // Ensure icons are rendered
+        if (window.lucide) {
+            lucide.createIcons();
+        }
     };
+
+    backButton.addEventListener('click', () => {
+        if (navHistory.length > 0) {
+            const previousPage = navHistory.pop();
+            navigateTo(previousPage, true);
+        } else {
+            navigateTo('dashboard-screen');
+        }
+    });
 
     navItems.forEach(item => {
         item.addEventListener('click', () => {
@@ -140,24 +180,60 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- Interview Details Panel Logic ---
+    const interviewItems = document.querySelectorAll('.dash-interview-item.clickable');
+    const interviewPanel = document.getElementById('interview-detail-panel');
+    const closePanelBtn = interviewPanel.querySelector('.close-panel');
+    const overlay = document.createElement('div');
+    overlay.className = 'panel-overlay';
+    document.body.appendChild(overlay);
+
+    const openInterviewDetail = (id) => {
+        // In a real app, fetch data by ID. Here we mock it.
+        interviewPanel.classList.add('active');
+        overlay.classList.add('active');
+        
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    };
+
+    const closeInterviewDetail = () => {
+        interviewPanel.classList.remove('active');
+        overlay.classList.remove('active');
+    };
+
+    interviewItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const id = item.getAttribute('data-id');
+            openInterviewDetail(id);
+        });
+    });
+
+    closePanelBtn.addEventListener('click', closeInterviewDetail);
+    overlay.addEventListener('click', closeInterviewDetail);
+
     // --- KPI Counter Animation (Premium Odometer Style) ---
     const initKPICounters = () => {
         const kpiValues = document.querySelectorAll('.kpi-value');
         
         kpiValues.forEach(el => {
-            const originalValue = el.textContent.trim();
-            const parts = originalValue.split('');
-            el.innerHTML = ''; // Clear original content
+            if (el.dataset.initialized) return;
             
-            parts.forEach((char, index) => {
+            const originalValue = el.textContent.trim();
+            el.dataset.value = originalValue;
+            el.innerHTML = '';
+            
+            const parts = originalValue.split('');
+            parts.forEach((char) => {
                 if (/\d/.test(char)) {
                     const container = document.createElement('div');
                     container.className = 'digit-container';
                     
                     const strip = document.createElement('div');
                     strip.className = 'digit-strip';
+                    strip.dataset.digit = char;
                     
-                    // Populate 0-9 for the strip
                     for (let i = 0; i <= 9; i++) {
                         const span = document.createElement('span');
                         span.textContent = i;
@@ -166,18 +242,35 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     container.appendChild(strip);
                     el.appendChild(container);
-                    
-                    // Set target position with a more organic staggered timing
-                    const targetDigit = parseInt(char);
-                    setTimeout(() => {
-                        strip.style.transform = `translateY(-${targetDigit * 10}%)`;
-                    }, 400 + (index * 120)); // Increased delay for mechanical feel
                 } else {
                     const sep = document.createElement('span');
                     sep.className = 'kpi-separator';
                     sep.textContent = char;
                     el.appendChild(sep);
                 }
+            });
+            el.dataset.initialized = 'true';
+        });
+    };
+
+    const runKPICounters = () => {
+        const kpiValues = document.querySelectorAll('.kpi-value');
+        kpiValues.forEach(el => {
+            const strips = el.querySelectorAll('.digit-strip');
+            strips.forEach((strip, index) => {
+                // Reset first
+                strip.style.transition = 'none';
+                strip.style.transform = 'translateY(0)';
+                
+                // Trigger reflow
+                void strip.offsetWidth;
+                
+                // Animate
+                strip.style.transition = 'transform 2s cubic-bezier(0.15, 0.9, 0.3, 1)';
+                const targetDigit = parseInt(strip.dataset.digit);
+                setTimeout(() => {
+                    strip.style.transform = `translateY(-${targetDigit * 10}%)`;
+                }, 100 + (index * 80)); // Slightly faster staggered delay
             });
         });
     };

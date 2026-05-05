@@ -228,6 +228,39 @@ body {
     position: relative;
 }
 
+/* Topbar Refinement */
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.back-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--neon-cyan);
+    color: var(--neon-cyan);
+    transform: translateX(-4px);
+}
+
+.back-btn i {
+    width: 20px;
+    height: 20px;
+}
+
 /* Topbar */
 .topbar {
     height: 80px;
