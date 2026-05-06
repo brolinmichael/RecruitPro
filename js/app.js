@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Interview Details Panel Logic ---
+    // --- Side Panel Logic (shared overlay) ---
     const interviewItems = document.querySelectorAll('.dash-interview-item.clickable');
     const interviewPanel = document.getElementById('interview-detail-panel');
     const closePanelBtn = interviewPanel.querySelector('.close-panel');
@@ -188,30 +188,288 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.className = 'panel-overlay';
     document.body.appendChild(overlay);
 
-    const openInterviewDetail = (id) => {
-        // In a real app, fetch data by ID. Here we mock it.
-        interviewPanel.classList.add('active');
-        overlay.classList.add('active');
-        
-        if (window.lucide) {
-            lucide.createIcons();
-        }
-    };
-
-    const closeInterviewDetail = () => {
-        interviewPanel.classList.remove('active');
+    const closeAllSidePanels = () => {
+        document.querySelectorAll('.side-panel.active').forEach(p => p.classList.remove('active'));
         overlay.classList.remove('active');
     };
 
+    const openSidePanel = (panel) => {
+        if (!panel) return;
+        panel.classList.add('active');
+        overlay.classList.add('active');
+        if (window.lucide) lucide.createIcons();
+    };
+
     interviewItems.forEach(item => {
-        item.addEventListener('click', () => {
-            const id = item.getAttribute('data-id');
-            openInterviewDetail(id);
-        });
+        item.addEventListener('click', () => openSidePanel(interviewPanel));
     });
 
-    closePanelBtn.addEventListener('click', closeInterviewDetail);
-    overlay.addEventListener('click', closeInterviewDetail);
+    closePanelBtn.addEventListener('click', closeAllSidePanels);
+    overlay.addEventListener('click', closeAllSidePanels);
+
+    // Generic close: any element with [data-close-panel] inside any side panel
+    document.querySelectorAll('.side-panel [data-close-panel]').forEach(el => {
+        el.addEventListener('click', closeAllSidePanels);
+    });
+
+    // --- Add Candidate Panel ---
+    const addCandPanel = document.getElementById('add-candidate-panel');
+    const openAddCandBtn = document.getElementById('open-add-candidate');
+    if (addCandPanel && openAddCandBtn) {
+        openAddCandBtn.addEventListener('click', () => openSidePanel(addCandPanel));
+
+        // Stage pill single-select
+        const stagePills = addCandPanel.querySelectorAll('.stage-pill');
+        stagePills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                stagePills.forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+            });
+        });
+
+        // Skills chip input
+        const skillInput = document.getElementById('cand-skill-input');
+        const skillChipsEl = document.getElementById('cand-skill-chips');
+        const addSkillChip = (raw) => {
+            const text = raw.trim().replace(/,/g, '');
+            if (!text) return;
+            const key = text.toLowerCase();
+            if ([...skillChipsEl.children].some(c => c.dataset.skill === key)) return;
+            const chip = document.createElement('span');
+            chip.className = 'skill-chip';
+            chip.dataset.skill = key;
+            const label = document.createTextNode(text);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.setAttribute('aria-label', `Remove ${text}`);
+            btn.textContent = '×';
+            btn.addEventListener('click', () => chip.remove());
+            chip.appendChild(label);
+            chip.appendChild(btn);
+            skillChipsEl.appendChild(chip);
+        };
+        if (skillInput) {
+            skillInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    addSkillChip(skillInput.value);
+                    skillInput.value = '';
+                } else if (e.key === 'Backspace' && !skillInput.value) {
+                    const last = skillChipsEl.lastElementChild;
+                    if (last) last.remove();
+                }
+            });
+            skillInput.addEventListener('blur', () => {
+                if (skillInput.value.trim()) {
+                    addSkillChip(skillInput.value);
+                    skillInput.value = '';
+                }
+            });
+        }
+
+        // Resume upload (click + drag/drop)
+        const uploadZone = document.getElementById('cand-upload-zone');
+        const resumeInput = document.getElementById('cand-resume');
+        const uploadPrimary = uploadZone && uploadZone.querySelector('.upload-primary');
+        const uploadSecondary = uploadZone && uploadZone.querySelector('.upload-secondary');
+        const DEFAULT_PRIMARY = 'Drop file here or click to upload';
+        const DEFAULT_SECONDARY = 'PDF, DOC, DOCX up to 10 MB';
+
+        const reflectFile = () => {
+            const file = resumeInput.files && resumeInput.files[0];
+            if (file) {
+                uploadZone.classList.add('has-file');
+                uploadPrimary.textContent = file.name;
+                uploadSecondary.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB · click to replace`;
+            } else {
+                uploadZone.classList.remove('has-file');
+                uploadPrimary.textContent = DEFAULT_PRIMARY;
+                uploadSecondary.textContent = DEFAULT_SECONDARY;
+            }
+        };
+
+        if (uploadZone && resumeInput) {
+            resumeInput.addEventListener('change', reflectFile);
+
+            ['dragenter', 'dragover'].forEach(ev => uploadZone.addEventListener(ev, (e) => {
+                e.preventDefault();
+                uploadZone.classList.add('dragover');
+            }));
+            ['dragleave', 'drop'].forEach(ev => uploadZone.addEventListener(ev, (e) => {
+                e.preventDefault();
+                uploadZone.classList.remove('dragover');
+            }));
+            uploadZone.addEventListener('drop', (e) => {
+                if (e.dataTransfer.files.length) {
+                    resumeInput.files = e.dataTransfer.files;
+                    reflectFile();
+                }
+            });
+        }
+
+        // Form submit: validate → build card → inject into chosen kanban column
+        const addCandForm = document.getElementById('add-candidate-form');
+        const stageColMap = {
+            applied:    '.col-applied',
+            screening:  '.col-screening',
+            interview:  '.col-interview',
+            offer:      '.col-offer'
+        };
+
+        const escapeHtml = (s) => {
+            const div = document.createElement('div');
+            div.textContent = s == null ? '' : String(s);
+            return div.innerHTML;
+        };
+
+        const buildCardTags = (skills, source, experience) => {
+            const tags = [...skills];
+            if (tags.length < 2 && source) tags.push(source);
+            if (tags.length < 2 && experience) tags.push(`${experience} yrs`);
+            return tags.slice(0, 2);
+        };
+
+        const buildCandidateCard = (data) => {
+            const card = document.createElement('div');
+            card.className = 'candidate-card is-new';
+
+            const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=random`;
+            const tags = buildCardTags(data.skills, data.source, data.experience);
+            // Manual entries don't have an AI score yet; show a realistic placeholder
+            const score = 78 + Math.floor(Math.random() * 17);
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <img src="${avatarUrl}" alt="${escapeHtml(data.name)}">
+                    <i data-lucide="more-vertical"></i>
+                </div>
+                <div class="card-info">
+                    <h5>${escapeHtml(data.name)}</h5>
+                    <p>${escapeHtml(data.position || '—')}</p>
+                </div>
+                <div class="card-score">
+                    <span class="score-label">Score</span>
+                    <span class="score-val">${score}%</span>
+                </div>
+                <div class="card-tags">
+                    ${tags.map(t => `<span>${escapeHtml(t)}</span>`).join('')}
+                </div>
+                <div class="card-footer">
+                    <div class="card-footer-icons">
+                        <i data-lucide="check-circle-2" class="check-icon"></i>
+                        <i data-lucide="layout"></i>
+                    </div>
+                    <div class="card-footer-icons">
+                        <i data-lucide="clock"></i>
+                        <i data-lucide="calendar"></i>
+                    </div>
+                </div>
+            `;
+
+            card.addEventListener('animationend', () => card.classList.remove('is-new'), { once: true });
+            return card;
+        };
+
+        const updateColCount = (col) => {
+            const cards = col.querySelectorAll('.candidate-card');
+            const countEl = col.querySelector('.col-count');
+            if (countEl) countEl.textContent = cards.length;
+        };
+
+        const collectSkills = () =>
+            [...skillChipsEl.children]
+                .map(c => c.firstChild && c.firstChild.nodeValue ? c.firstChild.nodeValue.trim() : '')
+                .filter(Boolean);
+
+        const resetForm = () => {
+            addCandForm.reset();
+            skillChipsEl.innerHTML = '';
+            stagePills.forEach(p => p.classList.remove('active'));
+            const defaultStage = addCandPanel.querySelector('.stage-pill[data-stage="applied"]');
+            if (defaultStage) defaultStage.classList.add('active');
+            if (uploadZone) reflectFile();
+            // Restore the prefilled position
+            const positionEl = document.getElementById('cand-position');
+            if (positionEl) positionEl.value = 'Senior UI/UX Designer';
+        };
+
+        addCandForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const nameEl = document.getElementById('cand-name');
+            const emailEl = document.getElementById('cand-email');
+            const name = nameEl.value.trim();
+            const email = emailEl.value.trim();
+            if (!name) { nameEl.focus(); return; }
+            if (!email) { emailEl.focus(); return; }
+
+            const stageBtn = addCandPanel.querySelector('.stage-pill.active');
+            const stage = stageBtn ? stageBtn.dataset.stage : 'applied';
+            const colSelector = stageColMap[stage] || '.col-applied';
+            const col = document.querySelector(`#pipeline-screen ${colSelector}`);
+            if (!col) return;
+
+            const data = {
+                name,
+                email,
+                phone: document.getElementById('cand-phone').value.trim(),
+                position: document.getElementById('cand-position').value.trim(),
+                experience: document.getElementById('cand-experience').value.trim(),
+                source: document.getElementById('cand-source').value,
+                skills: collectSkills(),
+                notes: document.getElementById('cand-notes').value.trim()
+            };
+
+            const card = buildCandidateCard(data);
+            const firstCard = col.querySelector('.candidate-card');
+            if (firstCard) col.insertBefore(card, firstCard);
+            else col.appendChild(card);
+
+            updateColCount(col);
+            if (window.lucide) lucide.createIcons();
+
+            // Bring the chosen column into view (kanban scrolls horizontally)
+            col.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+
+            closeAllSidePanels();
+            setTimeout(resetForm, 400);
+        });
+    }
+
+    // --- Copy Meeting Link ---
+    const copyLinkBtn = document.getElementById('det-copy-link-btn');
+    const meetingUrlEl = document.getElementById('det-meeting-url');
+    let copyResetTimer = null;
+
+    if (copyLinkBtn && meetingUrlEl) {
+        copyLinkBtn.addEventListener('click', async () => {
+            const url = meetingUrlEl.textContent.trim();
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(url);
+                } else {
+                    const ta = document.createElement('textarea');
+                    ta.value = url;
+                    ta.style.position = 'fixed';
+                    ta.style.opacity = '0';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                }
+
+                copyLinkBtn.classList.add('copied');
+                copyLinkBtn.setAttribute('title', 'Copied!');
+                clearTimeout(copyResetTimer);
+                copyResetTimer = setTimeout(() => {
+                    copyLinkBtn.classList.remove('copied');
+                    copyLinkBtn.setAttribute('title', 'Copy link');
+                }, 1600);
+            } catch (err) {
+                console.warn('Copy failed', err);
+            }
+        });
+    }
 
     // --- KPI Counter Animation (Premium Odometer Style) ---
     const initKPICounters = () => {

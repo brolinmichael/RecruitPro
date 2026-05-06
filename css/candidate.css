@@ -227,55 +227,88 @@
     gap: 12px;
 }
 
-.btn-secondary {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: var(--text-primary);
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: var(--transition-fast);
-    display: flex;
+/* =========================================================
+   Glass Action Buttons — color-coded by functionality
+   (Message=blue, Request Interview=cyan, Download CV=green)
+   ========================================================= */
+.btn-glass-action {
+    display: inline-flex;
     align-items: center;
     gap: 8px;
-}
-
-.btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.btn-action-cyan {
-    background: var(--neon-cyan);
-    border: none;
-    color: #000;
-    padding: 8px 16px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition-fast);
-}
-
-.btn-action-cyan:hover {
-    box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
-    transform: translateY(-1px);
-}
-
-.btn-icon {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.10);
     color: var(--text-primary);
-    padding: 8px;
-    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    font-family: inherit;
     cursor: pointer;
     transition: var(--transition-fast);
-    display: flex;
-    align-items: center;
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    white-space: nowrap;
+}
+
+.btn-glass-action i {
+    width: 16px;
+    height: 16px;
+    transition: transform var(--transition-fast);
+}
+
+.btn-glass-action:hover { transform: translateY(-1px); }
+.btn-glass-action:hover i { transform: scale(1.08); }
+.btn-glass-action:active { transform: translateY(0); }
+
+/* Cyan tone — Request Interview (primary scheduling action) */
+.btn-glass-action.tone-cyan {
+    border-color: rgba(0, 240, 255, 0.32);
+}
+.btn-glass-action.tone-cyan i { color: var(--neon-cyan); }
+.btn-glass-action.tone-cyan:hover {
+    background: rgba(0, 240, 255, 0.10);
+    border-color: var(--neon-cyan);
+    box-shadow: 0 8px 24px rgba(0, 240, 255, 0.30);
+}
+
+/* Blue tone — Message (communication) */
+.btn-glass-action.tone-blue {
+    border-color: rgba(58, 134, 255, 0.32);
+}
+.btn-glass-action.tone-blue i { color: var(--neon-blue); }
+.btn-glass-action.tone-blue:hover {
+    background: rgba(58, 134, 255, 0.10);
+    border-color: var(--neon-blue);
+    box-shadow: 0 8px 24px rgba(58, 134, 255, 0.30);
+}
+
+/* Green tone — Download CV (acquire/positive) */
+.btn-glass-action.tone-green {
+    border-color: rgba(0, 255, 136, 0.32);
+}
+.btn-glass-action.tone-green i { color: var(--neon-green); }
+.btn-glass-action.tone-green:hover {
+    background: rgba(0, 255, 136, 0.10);
+    border-color: var(--neon-green);
+    box-shadow: 0 8px 24px rgba(0, 255, 136, 0.30);
+}
+
+/* Icon-only variant — neutral */
+.btn-glass-action.tone-icon {
+    padding: 10px;
+    width: 40px;
+    height: 40px;
     justify-content: center;
 }
-.btn-icon:hover { background: rgba(255, 255, 255, 0.05); }
-.btn-icon i { width: 16px; height: 16px; }
+.btn-glass-action.tone-icon i { color: var(--text-secondary); }
+.btn-glass-action.tone-icon:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.18);
+}
+.btn-glass-action.tone-icon:hover i { color: var(--text-primary); }
 
 /* Tabs */
 .candidate-tabs {

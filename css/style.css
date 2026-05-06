@@ -157,25 +157,25 @@ body {
 }
 
 .input-wrapper {
-    position: relative;
     display: flex;
     align-items: center;
+    gap: 16px;
 }
 
 .input-wrapper i {
-    position: absolute;
-    left: 12px;
     color: var(--text-secondary);
     width: 18px;
     height: 18px;
+    flex-shrink: 0;
 }
 
 .input-wrapper input {
-    width: 100%;
+    flex: 1;
+    min-width: 0;
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    padding: 12px 12px 12px 40px;
+    padding: 12px 14px;
     color: var(--text-primary);
     font-family: inherit;
     font-size: 0.95rem;
@@ -263,12 +263,13 @@ body {
 
 /* Topbar */
 .topbar {
-    height: 80px;
-    padding: 0 40px;
+    height: 64px;
+    padding: 0 28px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
 }
 
 .topbar h1 {
@@ -355,7 +356,7 @@ body {
 }
 
 .page-view {
-    padding: 30px 40px;
+    padding: 20px 28px;
     flex: 1;
     overflow-y: auto;
     display: none;

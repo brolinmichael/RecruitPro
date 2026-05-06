@@ -384,7 +384,7 @@
             </div>
             <div id="jobs-screen" class="page-view" style="display: none;">
                     <div class="action-bar" style="display:flex;justify-content:flex-end;margin-bottom:12px;">
-                        <button class="btn-action-cyan"><i data-lucide="plus"></i> Create New Job</button>
+                        <button type="button" class="btn-add-candidate"><i data-lucide="plus"></i> <span>Create New Job</span></button>
                     </div>
                     <div class="section-title">Recent Insights</div>
                 <div class="insights-grid">
@@ -754,7 +754,13 @@
                     <!-- Right Kanban Board -->
                     <div class="pipeline-main">
                         <div class="job-details-top">
-                            <h2>Job Details</h2>
+                            <div class="job-details-top-row">
+                                <h2>Job Details</h2>
+                                <button type="button" class="btn-add-candidate" id="open-add-candidate">
+                                    <i data-lucide="user-plus"></i>
+                                    <span>Add Candidate</span>
+                                </button>
+                            </div>
                             <div class="pipeline-header">
                                 <h4>CANDIDATE PIPELINE</h4>
                                 <div style="font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;"><i data-lucide="chevron-left" style="width:14px;vertical-align:middle;"></i> Scroll <i data-lucide="chevron-right" style="width:14px;vertical-align:middle;"></i></div>
@@ -1428,10 +1434,10 @@
                         <div class="candidate-header">
                             <h2>Candidate Profile</h2>
                             <div class="candidate-actions">
-                                <button class="btn-secondary"><i data-lucide="mail"></i> Message</button>
-                                <button class="btn-action-cyan">Request interview</button>
-                                <button class="btn-action-cyan">Download CV</button>
-                                <button class="btn-icon"><i data-lucide="download"></i></button>
+                                <button type="button" class="btn-glass-action tone-blue"><i data-lucide="mail"></i> <span>Message</span></button>
+                                <button type="button" class="btn-glass-action tone-cyan"><i data-lucide="calendar-plus"></i> <span>Request Interview</span></button>
+                                <button type="button" class="btn-glass-action tone-green"><i data-lucide="file-down"></i> <span>Download CV</span></button>
+                                <button type="button" class="btn-glass-action tone-icon" aria-label="More"><i data-lucide="more-horizontal"></i></button>
                             </div>
                         </div>
 
@@ -1507,7 +1513,7 @@
                 </div>
                 <div>
                     <h2>Interview Detail</h2>
-                    <p>Today · Evaluation session</p>
+                    <p id="det-round-label">Round 2 · Portfolio Review</p>
                 </div>
             </div>
             <button class="close-panel"><i data-lucide="x"></i></button>
@@ -1525,9 +1531,21 @@
                 <div class="hero-info">
                     <h3 id="det-candidate-name">Sarah Jenkins</h3>
                     <p id="det-candidate-role">Senior UI/UX Designer</p>
-                    <div class="hero-tags">
-                        <span class="hero-tag tag-match">⚡ 92% Match</span>
-                        <span class="hero-tag tag-round">Round 2</span>
+                </div>
+                <div class="ai-score-ring" title="AI Match Score">
+                    <svg class="score-ring-svg" viewBox="0 0 64 64" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#00f0ff"/>
+                                <stop offset="100%" stop-color="#b537f2"/>
+                            </linearGradient>
+                        </defs>
+                        <circle class="score-ring-bg" cx="32" cy="32" r="26"/>
+                        <circle class="score-ring-progress" cx="32" cy="32" r="26"/>
+                    </svg>
+                    <div class="ai-score-text">
+                        <span class="score-value">92<small>%</small></span>
+                        <span class="score-label">Match</span>
                     </div>
                 </div>
             </div>
@@ -1566,11 +1584,6 @@
                         <span class="slider"></span>
                     </label>
                 </div>
-                <div class="ai-features">
-                    <span class="ai-feature-tag"><i data-lucide="file-text"></i> Auto-notes</span>
-                    <span class="ai-feature-tag"><i data-lucide="bar-chart-2"></i> Live scoring</span>
-                    <span class="ai-feature-tag"><i data-lucide="flag"></i> Red flags</span>
-                </div>
             </div>
 
             <!-- Interviewer Team -->
@@ -1603,12 +1616,12 @@
                         <div class="meeting-link-icon"><i data-lucide="video"></i></div>
                         <div class="meeting-link-text">
                             <span class="meeting-link-label">Meeting Link</span>
-                            <span class="meeting-link-url">meet.google.com/rp-sj-2026</span>
+                            <span class="meeting-link-url" id="det-meeting-url">meet.google.com/rp-sj-2026</span>
                         </div>
-                    </div>
-                    <div class="meeting-actions">
-                        <button class="btn-glass"><i data-lucide="copy"></i> Copy Link</button>
-                        <button class="btn-glass btn-glass-accent"><i data-lucide="share-2"></i> Share</button>
+                        <button type="button" class="meeting-copy-btn" id="det-copy-link-btn" aria-label="Copy meeting link" title="Copy link">
+                            <i data-lucide="copy" class="icon-copy"></i>
+                            <i data-lucide="check" class="icon-check"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1619,6 +1632,131 @@
         <div class="side-panel-footer">
             <button class="btn-cancel-interview"><i data-lucide="x-circle"></i> Cancel</button>
             <button class="btn-reschedule"><i data-lucide="calendar-check"></i> Reschedule</button>
+        </div>
+    </div>
+
+    <!-- Add Candidate Slide-over -->
+    <div id="add-candidate-panel" class="side-panel">
+        <div class="side-panel-header">
+            <div class="header-left">
+                <div class="header-icon-wrap"><i data-lucide="user-plus"></i></div>
+                <div>
+                    <h2>Add Candidate</h2>
+                    <p>Manually create a new applicant</p>
+                </div>
+            </div>
+            <button type="button" class="close-panel" data-close-panel><i data-lucide="x"></i></button>
+        </div>
+
+        <form class="side-panel-body" id="add-candidate-form" novalidate>
+            <!-- Candidate -->
+            <div class="panel-section">
+                <div class="panel-section-header">
+                    <span class="panel-section-title">Candidate</span>
+                </div>
+                <div class="form-field">
+                    <label for="cand-name">Full Name <span class="required">*</span></label>
+                    <input type="text" id="cand-name" class="form-input" placeholder="e.g. Sarah Jenkins" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="cand-email">Email <span class="required">*</span></label>
+                        <input type="email" id="cand-email" class="form-input" placeholder="name@company.com" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="cand-phone">Phone</label>
+                        <input type="tel" id="cand-phone" class="form-input" placeholder="+1 (555) 000-0000">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role -->
+            <div class="panel-section">
+                <div class="panel-section-header">
+                    <span class="panel-section-title">Role</span>
+                </div>
+                <div class="form-field">
+                    <label for="cand-position">Position</label>
+                    <input type="text" id="cand-position" class="form-input" value="Senior UI/UX Designer">
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="cand-experience">Experience</label>
+                        <div class="input-affix">
+                            <input type="number" id="cand-experience" class="form-input" placeholder="5" min="0" max="60">
+                            <span class="affix">yrs</span>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="cand-source">Source</label>
+                        <select id="cand-source" class="form-input form-select">
+                            <option>LinkedIn</option>
+                            <option>Indeed</option>
+                            <option>Referral</option>
+                            <option>Company Website</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Initial Stage -->
+            <div class="panel-section">
+                <div class="panel-section-header">
+                    <span class="panel-section-title">Initial Stage</span>
+                </div>
+                <div class="stage-pills" role="radiogroup" aria-label="Initial pipeline stage">
+                    <button type="button" class="stage-pill stage-applied active" data-stage="applied">Applied</button>
+                    <button type="button" class="stage-pill stage-screening" data-stage="screening">Screening</button>
+                    <button type="button" class="stage-pill stage-interview" data-stage="interview">Interview</button>
+                    <button type="button" class="stage-pill stage-offer" data-stage="offer">Offer</button>
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="panel-section">
+                <div class="panel-section-header">
+                    <span class="panel-section-title">Skills</span>
+                </div>
+                <div class="skills-input-wrap">
+                    <div class="skill-chips" id="cand-skill-chips"></div>
+                    <input type="text" id="cand-skill-input" class="form-input" placeholder="Type a skill and press Enter">
+                </div>
+            </div>
+
+            <!-- Resume -->
+            <div class="panel-section">
+                <div class="panel-section-header">
+                    <span class="panel-section-title">Resume</span>
+                </div>
+                <label class="upload-zone" id="cand-upload-zone">
+                    <input type="file" id="cand-resume" accept=".pdf,.doc,.docx" hidden>
+                    <div class="upload-icon"><i data-lucide="upload-cloud"></i></div>
+                    <div class="upload-text">
+                        <span class="upload-primary">Drop file here or click to upload</span>
+                        <span class="upload-secondary">PDF, DOC, DOCX up to 10 MB</span>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Notes -->
+            <div class="panel-section">
+                <div class="panel-section-header">
+                    <span class="panel-section-title">Notes</span>
+                </div>
+                <div class="form-field">
+                    <textarea id="cand-notes" class="form-input form-textarea" rows="3" placeholder="Any context that would help the hiring team…"></textarea>
+                </div>
+            </div>
+        </form>
+
+        <div class="side-panel-footer">
+            <button type="button" class="btn-cancel-interview" data-close-panel>
+                <i data-lucide="x-circle"></i> Cancel
+            </button>
+            <button type="submit" form="add-candidate-form" class="btn-save-candidate">
+                <i data-lucide="user-check"></i> Save Candidate
+            </button>
         </div>
     </div>
 

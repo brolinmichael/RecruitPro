@@ -98,6 +98,58 @@
     margin-bottom: 16px;
 }
 
+.job-details-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.job-details-top-row h2 {
+    margin-bottom: 0;
+}
+
+/* Glassmorphic Add Candidate trigger */
+.btn-add-candidate {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid rgba(0, 240, 255, 0.28);
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    white-space: nowrap;
+}
+
+.btn-add-candidate i {
+    width: 16px;
+    height: 16px;
+    color: var(--neon-cyan);
+    transition: var(--transition-fast);
+}
+
+.btn-add-candidate:hover {
+    background: rgba(0, 240, 255, 0.10);
+    border-color: var(--neon-cyan);
+    box-shadow: 0 8px 24px rgba(0, 240, 255, 0.28);
+    transform: translateY(-1px);
+}
+
+.btn-add-candidate:hover i { transform: rotate(8deg) scale(1.05); }
+
+.btn-add-candidate:active { transform: translateY(0); }
+
 .pipeline-header {
     display: flex;
     justify-content: space-between;
@@ -212,6 +264,16 @@
     background: rgba(255, 255, 255, 0.08);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.candidate-card.is-new {
+    animation: cardAddIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+    box-shadow: 0 0 0 1px rgba(0, 240, 255, 0.45), 0 10px 28px rgba(0, 240, 255, 0.18);
+}
+
+@keyframes cardAddIn {
+    0%   { opacity: 0; transform: translateY(-14px) scale(0.96); }
+    100% { opacity: 1; transform: none; }
 }
 
 .card-header {
