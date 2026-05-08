@@ -1,30 +1,100 @@
 /* Base Variables and Reset */
 :root {
-    /* Color Palette */
+    /* Theme tokens (dark default — overridden by [data-theme="light"]) */
     --bg-dark: #0a0c10;
     --bg-panel: rgba(22, 27, 34, 0.6);
     --bg-panel-hover: rgba(30, 35, 45, 0.8);
     --text-primary: #ffffff;
     --text-secondary: #8b949e;
     --border-color: rgba(255, 255, 255, 0.08);
-    
-    /* Neon Accents */
+
+    /* Theme-aware surface tints (used by interactive overlays) */
+    --surface-rgb: 255, 255, 255;
+    --surface-faint: rgba(255, 255, 255, 0.025);
+    --surface-soft:  rgba(255, 255, 255, 0.04);
+    --surface-medium: rgba(255, 255, 255, 0.06);
+    --surface-strong: rgba(255, 255, 255, 0.10);
+
+    /* Neon palette (categorical — never themed) */
     --neon-cyan: #00f0ff;
     --neon-green: #00ff88;
     --neon-purple: #b537f2;
     --neon-blue: #3a86ff;
-    
-    /* Shadows & Glows */
+
+    /* Glows */
     --glow-cyan: 0 0 20px rgba(0, 240, 255, 0.3);
     --glow-purple: 0 0 20px rgba(181, 55, 242, 0.3);
     --glow-green: 0 0 20px rgba(0, 255, 136, 0.3);
-    
+
+    /* Accent — user-selectable. Defaults to cyan; overridden via [data-accent] */
+    --accent: var(--neon-cyan);
+    --accent-rgb: 0, 240, 255;
+    --accent-glow: var(--glow-cyan);
+
+    /* Secondary-accent — used by the body bg gradient for visual variety.
+       Each [data-accent="..."] sets it to a complementary hue so the page
+       gradient shifts along with the user's chosen accent. */
+    --accent-2-rgb: 181, 55, 242;       /* purple complements default cyan */
+
+    /* Body background blob colors — derived from accent vars so theme/accent
+       switching is automatic (no hardcoded overrides per theme). */
+    --bg-blob-1: rgba(var(--accent-2-rgb), 0.16);
+    --bg-blob-2: rgba(var(--accent-rgb), 0.10);
+    --bg-blob-fade: rgba(10, 12, 16, 0);
+
     /* Typography */
     --font-family: 'Inter', sans-serif;
-    
+
     /* Transitions */
     --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-medium: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-theme: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease;
+}
+
+/* Light theme override
+   Soft mint-teal page (color comes from the accent-driven blobs)
+   with opaque-white frosted glass surfaces. */
+[data-theme="light"] {
+    --bg-dark: #e3ede8;                          /* soft cream base */
+    --bg-panel: rgba(255, 255, 255, 0.92);
+    --bg-panel-hover: rgba(255, 255, 255, 0.98);
+    --text-primary: #14202c;
+    --text-secondary: #5a6478;
+    --border-color: rgba(13, 17, 23, 0.07);
+
+    --surface-rgb: 13, 17, 23;
+    --surface-faint:  rgba(13, 17, 23, 0.025);
+    --surface-soft:   rgba(13, 17, 23, 0.04);
+    --surface-medium: rgba(13, 17, 23, 0.06);
+    --surface-strong: rgba(13, 17, 23, 0.10);
+
+    /* Light-mode blobs: stronger saturation so the pastel wash is visible on cream */
+    --bg-blob-1: rgba(var(--accent-2-rgb), 0.32);
+    --bg-blob-2: rgba(var(--accent-rgb), 0.26);
+    --bg-blob-fade: rgba(227, 237, 232, 0);
+}
+
+/* Accent overrides — each accent maps to a complementary --accent-2-rgb
+   so the page gradient also shifts when the user changes accent. */
+[data-accent="cyan"] {
+    --accent: var(--neon-cyan); --accent-rgb: 0, 240, 255; --accent-glow: var(--glow-cyan);
+    --accent-2-rgb: 181, 55, 242;       /* paired with purple */
+}
+[data-accent="purple"] {
+    --accent: var(--neon-purple); --accent-rgb: 181, 55, 242; --accent-glow: var(--glow-purple);
+    --accent-2-rgb: 0, 240, 255;        /* paired with cyan */
+}
+[data-accent="green"] {
+    --accent: var(--neon-green); --accent-rgb: 0, 255, 136; --accent-glow: var(--glow-green);
+    --accent-2-rgb: 58, 134, 255;       /* paired with blue */
+}
+[data-accent="blue"] {
+    --accent: var(--neon-blue); --accent-rgb: 58, 134, 255; --accent-glow: 0 0 20px rgba(58, 134, 255, 0.30);
+    --accent-2-rgb: 181, 55, 242;       /* paired with purple */
+}
+[data-accent="orange"] {
+    --accent: #fb923c; --accent-rgb: 251, 146, 60; --accent-glow: 0 0 20px rgba(251, 146, 60, 0.32);
+    --accent-2-rgb: 251, 113, 133;      /* paired with rose */
 }
 
 * {
@@ -41,20 +111,23 @@ body {
     min-height: 100vh;
     display: flex;
     position: relative;
+    transition: var(--transition-theme);
 }
 
-/* Background Gradients to match the reference images */
+/* Background Gradients — driven entirely by CSS variables.
+   Theme switching and accent changes both update the colors automatically. */
 .bg-gradient-1 {
     position: absolute;
     top: -20%;
     left: -10%;
     width: 60%;
     height: 80%;
-    background: radial-gradient(circle, rgba(181, 55, 242, 0.15) 0%, rgba(10, 12, 16, 0) 70%);
+    background: radial-gradient(circle, var(--bg-blob-1) 0%, var(--bg-blob-fade) 70%);
     filter: blur(80px);
     z-index: -1;
     pointer-events: none;
     animation: pulseBg 10s infinite alternate;
+    transition: background 0.6s ease, opacity 0.6s ease;
 }
 
 .bg-gradient-2 {
@@ -63,11 +136,12 @@ body {
     right: -10%;
     width: 60%;
     height: 80%;
-    background: radial-gradient(circle, rgba(0, 240, 255, 0.1) 0%, rgba(10, 12, 16, 0) 70%);
+    background: radial-gradient(circle, var(--bg-blob-2) 0%, var(--bg-blob-fade) 70%);
     filter: blur(80px);
     z-index: -1;
     pointer-events: none;
     animation: pulseBg 12s infinite alternate-reverse;
+    transition: background 0.6s ease, opacity 0.6s ease;
 }
 
 @keyframes pulseBg {
@@ -88,12 +162,18 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 16px;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    transition: var(--transition-theme);
+}
+
+[data-theme="light"] .glass-panel {
+    box-shadow: 0 6px 24px rgba(13, 17, 23, 0.08);
 }
 
 .glass-panel-no-border {
     background: var(--bg-panel);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    transition: var(--transition-theme);
 }
 
 /* Buttons */
@@ -114,13 +194,13 @@ body {
 }
 
 .btn-primary.glow-cyan {
-    border-color: rgba(0, 240, 255, 0.3);
+    border-color: rgba(var(--accent-rgb), 0.30);
 }
 
 .btn-primary.glow-cyan:hover {
-    background: rgba(0, 240, 255, 0.1);
-    box-shadow: var(--glow-cyan);
-    border-color: var(--neon-cyan);
+    background: rgba(var(--accent-rgb), 0.10);
+    box-shadow: var(--accent-glow);
+    border-color: var(--accent);
     transform: translateY(-2px);
 }
 
@@ -172,7 +252,7 @@ body {
 .input-wrapper input {
     flex: 1;
     min-width: 0;
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(var(--surface-rgb), 0.08);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 12px 14px;
@@ -182,10 +262,12 @@ body {
     transition: var(--transition-fast);
 }
 
+[data-theme="dark"] .input-wrapper input { background: rgba(0, 0, 0, 0.20); }
+
 .input-wrapper input:focus {
     outline: none;
-    border-color: var(--neon-cyan);
-    box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.1);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.12);
 }
 
 .input-wrapper input::placeholder {
@@ -268,8 +350,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--border-color);
     flex-shrink: 0;
+    transition: var(--transition-theme);
 }
 
 .topbar h1 {
@@ -386,9 +469,928 @@ body {
     background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(var(--surface-rgb), 0.18);
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(var(--surface-rgb), 0.30);
+}
+
+/* =========================================================
+   LIGHT THEME — readability + depth overrides
+   The components below were authored with rgba(255,255,255,X)
+   surface tints and `color: #fff` text. On a light page that
+   reads as white-on-white. We flip them to dark equivalents.
+   ========================================================= */
+
+[data-theme="light"] {
+    /* ---- Strong text (was hardcoded white) ---- */
+    --text-strong-on-light: #0a0c10;
+}
+
+/* Card / list-row / panel BACKGROUNDS (were rgba(255,255,255,X) → invisible) */
+[data-theme="light"] .candidate-card,
+[data-theme="light"] .interview-card,
+[data-theme="light"] .dash-interview-item,
+[data-theme="light"] .snapshot-card,
+[data-theme="light"] .activity-content,
+[data-theme="light"] .priority-role-item,
+[data-theme="light"] .info-cell,
+[data-theme="light"] .panel-card,
+[data-theme="light"] .interviewer-pill,
+[data-theme="light"] .meeting-card,
+[data-theme="light"] .cd-section,
+[data-theme="light"] .cd-link-row,
+[data-theme="light"] .cd-timeline-meta,
+[data-theme="light"] .stage-pill,
+[data-theme="light"] .skill-chip,
+[data-theme="light"] .upload-zone,
+[data-theme="light"] .form-input,
+[data-theme="light"] .meeting-copy-btn,
+[data-theme="light"] .pill-action,
+[data-theme="light"] .job-row,
+[data-theme="light"] .candidates-grid .candidate-card,
+[data-theme="light"] .kanban-column .candidate-card,
+[data-theme="light"] .calendar-day-header {
+    background: rgba(13, 17, 23, 0.04);
+    border-color: rgba(13, 17, 23, 0.10);
+}
+
+[data-theme="light"] .candidate-card:hover,
+[data-theme="light"] .interview-card:hover,
+[data-theme="light"] .dash-interview-item:hover,
+[data-theme="light"] .snapshot-card:hover,
+[data-theme="light"] .priority-role-item:hover,
+[data-theme="light"] .info-cell:hover,
+[data-theme="light"] .interviewer-pill:hover,
+[data-theme="light"] .meeting-card:hover,
+[data-theme="light"] .cd-link-row:hover,
+[data-theme="light"] .stage-pill:hover {
+    background: rgba(13, 17, 23, 0.07);
+    border-color: rgba(13, 17, 23, 0.16);
+}
+
+/* Card text — flip white-by-default to dark */
+[data-theme="light"] .card-info h5,
+[data-theme="light"] .card-score .score-val,
+[data-theme="light"] .card-tags span,
+[data-theme="light"] .timeline-item-info h4,
+[data-theme="light"] .interview-info h4,
+[data-theme="light"] .candidate-info h4,
+[data-theme="light"] .activity-content p,
+[data-theme="light"] .activity-content strong,
+[data-theme="light"] .interviewer-info span,
+[data-theme="light"] .meeting-meta span,
+[data-theme="light"] .dash-interview-item .time-block .time,
+[data-theme="light"] .info-cell .info-value,
+[data-theme="light"] .priority-role-item h4,
+[data-theme="light"] .role-stats .count,
+[data-theme="light"] .snapshot-data .count,
+[data-theme="light"] .small-donut-text,
+[data-theme="light"] .insight-value,
+[data-theme="light"] .kpi-value,
+[data-theme="light"] .topbar h1,
+[data-theme="light"] .cand-insight-value,
+[data-theme="light"] .cd-hero-info h3,
+[data-theme="light"] .cd-section-title,
+[data-theme="light"] .cd-link-label,
+[data-theme="light"] .cd-highlight,
+[data-theme="light"] .cd-timeline-info h4,
+[data-theme="light"] .cd-skill-tag,
+[data-theme="light"] .cd-tab-btn.active,
+[data-theme="light"] .ai-card-label h4,
+[data-theme="light"] .pill-info .name,
+[data-theme="light"] .meeting-link-url,
+[data-theme="light"] .panel-section-title,
+[data-theme="light"] .panel-header h3,
+[data-theme="light"] .interview-meta span,
+[data-theme="light"] .candidates-screen-header h2,
+[data-theme="light"] .settings-row-info h4,
+[data-theme="light"] .candidate-info h4 {
+    color: var(--text-primary);
+}
+
+/* "!important" override needed for .score-val (legacy rule was !important) */
+[data-theme="light"] .card-score .score-val {
+    color: var(--text-primary) !important;
+}
+
+/* (Section labels & paragraph text already use var(--text-secondary)
+   which adapts automatically — no light-mode override needed.) */
+
+/* Tag/badge backgrounds */
+[data-theme="light"] .card-tags span {
+    background: rgba(13, 17, 23, 0.06);
+    border-color: rgba(13, 17, 23, 0.10);
+}
+
+[data-theme="light"] .cd-timeline-meta {
+    background: rgba(13, 17, 23, 0.05);
+    border-color: rgba(13, 17, 23, 0.10);
+}
+
+/* Pipeline mini progress dashes (under priority roles) */
+[data-theme="light"] .p-step {
+    background: rgba(13, 17, 23, 0.10);
+}
+/* The active dashes are already neon-cyan */
+
+/* Skills chips (cyan-tinted) — strengthen text contrast */
+[data-theme="light"] .cd-skill-tag {
+    background: rgba(0, 240, 255, 0.10);
+    border-color: rgba(0, 200, 220, 0.40);
+    color: #006a78;
+}
+[data-theme="light"] .cd-skill-tag:hover {
+    background: rgba(0, 240, 255, 0.16);
+    border-color: rgba(0, 180, 200, 0.55);
+    color: #004a55;
+}
+
+/* Status dot border on hero avatar (was dark to punch through dark page) */
+[data-theme="light"] .cd-hero-status-dot,
+[data-theme="light"] .hero-status-dot {
+    border-color: var(--bg-dark);
+}
+
+/* Topbar / IDE-like search input */
+[data-theme="light"] .search-bar {
+    background: rgba(13, 17, 23, 0.04);
+}
+
+/* AI Highlights icon stroke + text */
+[data-theme="light"] .cd-highlight {
+    color: var(--text-primary);
+}
+
+/* Quick info-grid cell value — was inheriting white */
+[data-theme="light"] .info-cell .info-value {
+    color: var(--text-primary);
+}
+
+/* Icon tile (briefcase, mail) backgrounds — make them visible on light */
+[data-theme="light"] .header-icon-wrap {
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.16), rgba(181, 55, 242, 0.12));
+}
+
+/* AI feature card glow blob — dim it on light page */
+[data-theme="light"] .ai-card::before,
+[data-theme="light"] .cd-ai-section::before {
+    opacity: 0.5;
+}
+
+/* Stage pill hover/active — already use accent rgba so they adapt; just darken default */
+[data-theme="light"] .stage-pill {
+    color: #444c5a;
+}
+
+/* Side-panel (Interview Detail / Add Candidate) — frost glass on light */
+[data-theme="light"] .side-panel {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(248, 250, 254, 0.92) 100%);
+    border-color: rgba(13, 17, 23, 0.10);
+    box-shadow:
+        -16px 0 40px rgba(13, 17, 23, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.60);
+}
+
+[data-theme="light"] .side-panel-header {
+    background: radial-gradient(120% 100% at 0% 0%, rgba(0, 240, 255, 0.06), transparent 60%);
+    border-bottom-color: rgba(13, 17, 23, 0.08);
+}
+
+[data-theme="light"] .side-panel-footer {
+    background: linear-gradient(180deg, transparent, rgba(13, 17, 23, 0.04));
+    border-top-color: rgba(13, 17, 23, 0.08);
+}
+
+[data-theme="light"] .close-panel {
+    background: rgba(13, 17, 23, 0.04);
+    border-color: rgba(13, 17, 23, 0.10);
+}
+
+/* Form inputs in side panels */
+[data-theme="light"] .form-input {
+    background: rgba(13, 17, 23, 0.04);
+    border-color: rgba(13, 17, 23, 0.12);
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .form-input::placeholder {
+    color: rgba(13, 17, 23, 0.35);
+}
+
+[data-theme="light"] .form-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235a6478' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}
+
+[data-theme="light"] .form-select option {
+    background: #ffffff;
+    color: var(--text-primary);
+}
+
+/* Login wrapper: stronger panel contrast */
+[data-theme="light"] .input-wrapper input {
+    background: rgba(13, 17, 23, 0.04);
+}
+
+/* Calendar event tiles — strengthen contrast */
+[data-theme="light"] .cal-event-cyan { background: rgba(0, 240, 255, 0.12); }
+[data-theme="light"] .cal-event-purple { background: rgba(181, 55, 242, 0.12); }
+
+/* Calendar grid background should be subtle dark tint, not "off white over off white" */
+[data-theme="light"] .calendar-grid {
+    background: rgba(255, 255, 255, 0.50);
+}
+
+[data-theme="light"] .calendar-day-header {
+    background: rgba(13, 17, 23, 0.03);
+}
+
+/* Search input on candidates page */
+[data-theme="light"] .cand-search input {
+    background: rgba(13, 17, 23, 0.04);
+    border-color: rgba(13, 17, 23, 0.12);
+}
+[data-theme="light"] .cand-search input::placeholder { color: rgba(13, 17, 23, 0.35); }
+
+/* Glass action buttons — subtle dark tint base on light */
+[data-theme="light"] .btn-glass-action,
+[data-theme="light"] .btn-add-candidate,
+[data-theme="light"] .btn-cal-action {
+    background: rgba(13, 17, 23, 0.04);
+    color: var(--text-primary);
+    box-shadow:
+        0 2px 10px rgba(13, 17, 23, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.60);
+}
+
+[data-theme="light"] .btn-glass-action.tone-icon i { color: var(--text-secondary); }
+[data-theme="light"] .btn-glass-action.tone-icon:hover { background: rgba(13, 17, 23, 0.08); }
+
+/* Theme/accent settings controls — re-tint dark-mode toggle bg */
+[data-theme="light"] .theme-toggle {
+    background: rgba(13, 17, 23, 0.04);
+}
+
+/* Dashboard candidate-info avatar text (initials are colored) – keep */
+[data-theme="light"] .candidate-info .avatar-initials { color: #07111a; }
+
+/* Pipeline kanban column tints become very light in light mode — strengthen */
+[data-theme="light"] .col-applied   { background: rgba(50, 211, 238, 0.14);  border-color: rgba(50, 211, 238, 0.34); }
+[data-theme="light"] .col-screening { background: rgba(248, 191, 36, 0.14);  border-color: rgba(248, 191, 36, 0.36); }
+[data-theme="light"] .col-interview { background: rgba(129, 140, 248, 0.16); border-color: rgba(129, 140, 248, 0.34); }
+[data-theme="light"] .col-offer     { background: rgba(16, 185, 129, 0.14);  border-color: rgba(16, 185, 129, 0.34); }
+[data-theme="light"] .col-hired     { background: rgba(74, 222, 128, 0.14);  border-color: rgba(74, 222, 128, 0.34); }
+
+/* Slider knob shadow stronger on light */
+[data-theme="light"] .slider:before {
+    box-shadow: 0 2px 6px rgba(13, 17, 23, 0.20);
+}
+
+/* Add proper depth — shadow on cards */
+[data-theme="light"] .candidate-card,
+[data-theme="light"] .interview-card,
+[data-theme="light"] .dash-interview-item,
+[data-theme="light"] .snapshot-card,
+[data-theme="light"] .info-cell,
+[data-theme="light"] .priority-role-item,
+[data-theme="light"] .interviewer-pill,
+[data-theme="light"] .meeting-card,
+[data-theme="light"] .cd-section,
+[data-theme="light"] .panel-card {
+    box-shadow: 0 2px 8px rgba(13, 17, 23, 0.04);
+}
+
+[data-theme="light"] .candidate-card:hover,
+[data-theme="light"] .interview-card:hover,
+[data-theme="light"] .dash-interview-item:hover,
+[data-theme="light"] .snapshot-card:hover {
+    box-shadow: 0 8px 24px rgba(13, 17, 23, 0.12);
+}
+
+/* KPI / Insight card shadow on light */
+[data-theme="light"] .kpi-card,
+[data-theme="light"] .insight-card,
+[data-theme="light"] .cand-insight,
+[data-theme="light"] .settings-section {
+    box-shadow: 0 4px 16px rgba(13, 17, 23, 0.06);
+}
+
+[data-theme="light"] .kpi-card:hover,
+[data-theme="light"] .insight-card:hover,
+[data-theme="light"] .cand-insight:hover {
+    box-shadow: 0 12px 32px rgba(13, 17, 23, 0.14);
+}
+
+/* =========================================================
+   Mobile menu toggle (default: hidden on desktop)
+   ========================================================= */
+.menu-toggle {
+    display: none;
+    background: rgba(var(--surface-rgb), 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-family: inherit;
+    transition: var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.menu-toggle i { width: 20px; height: 20px; }
+
+.menu-toggle:hover {
+    background: rgba(var(--accent-rgb), 0.10);
+    border-color: rgba(var(--accent-rgb), 0.30);
+    color: var(--accent);
+}
+
+/* =========================================================
+   RESPONSIVE — Tablet (≤ 1024px)
+   ========================================================= */
+@media (max-width: 1024px) {
+    /* Sidebar narrows */
+    .sidebar { width: 200px; }
+
+    /* Dashboard: KPI row to 2 cols, panels span full width */
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .dash-upcoming-interviews,
+    .dash-priority-snapshot,
+    .dash-recent-activity,
+    .dash-priority-roles { grid-column: 1 / -1; }
+
+    /* Pipeline: stack JD sidebar above kanban */
+    .pipeline-layout {
+        grid-template-columns: 1fr;
+    }
+    .job-desc-sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding-right: 0;
+        padding-bottom: 18px;
+        max-height: 240px;
+    }
+
+    /* Candidate-details: stack the two columns */
+    .cd-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Insights / candidates insights: 2-col instead of 4 */
+    .insights-grid,
+    .candidates-insights {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Candidate-details info-grid: 2-col */
+    #candidate-details-screen .cd-info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Calendar: sidebar moves below the grid */
+    .calendar-layout {
+        flex-direction: column;
+    }
+    .calendar-sidebar {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        padding-left: 0;
+        padding-top: 18px;
+        margin-top: 18px;
+    }
+
+    /* Settings form: 1-col */
+    .settings-form-grid { grid-template-columns: 1fr; }
+}
+
+/* =========================================================
+   RESPONSIVE — Mobile (≤ 768px)
+   ========================================================= */
+@media (max-width: 768px) {
+    /* Sidebar becomes off-canvas drawer */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 240px;
+        height: 100vh;
+        z-index: 2100;
+        transform: translateX(-110%);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 8px 0 32px rgba(0, 0, 0, 0.4);
+    }
+    .sidebar.is-open { transform: translateX(0); }
+
+    /* Hamburger appears */
+    .menu-toggle { display: inline-flex; }
+
+    /* Topbar tightens */
+    .topbar { padding: 0 14px; height: 60px; gap: 8px; }
+    .topbar h1 { font-size: 1rem; }
+    .topbar-actions { gap: 8px; }
+
+    /* Search shrinks to icon-only at this width — keep icon, hide input */
+    .search-bar {
+        padding: 0 10px;
+        height: 38px;
+        width: 38px;
+        justify-content: center;
+    }
+    .search-bar input { display: none; }
+
+    /* User profile: hide name + chevron, keep avatar */
+    .user-profile { padding-left: 8px; gap: 0; border-left: none; }
+    .user-profile span,
+    .user-profile > i { display: none; }
+
+    /* Hide the message icon to save space */
+    .topbar-actions .icon-btn:not(.notification) { display: none; }
+
+    /* Page-view tighter padding */
+    .page-view { padding: 14px 14px; }
+
+    /* Dashboard grid all single-column */
+    .dashboard-grid { gap: 10px; }
+    .kpi-row { grid-template-columns: 1fr; gap: 10px; }
+    .dashboard-grid > * { grid-column: 1 / -1; }
+
+    /* Insights & candidates insights single-column */
+    .insights-grid,
+    .candidates-insights {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    /* Candidate-details info-grid → single column */
+    #candidate-details-screen .cd-info-grid,
+    .info-grid { grid-template-columns: repeat(2, 1fr); }
+
+    /* Form rows stack */
+    .form-row { grid-template-columns: 1fr; }
+    .form-row.salary-row { grid-template-columns: 1fr 1fr 1fr; }
+
+    /* Side panels full-width */
+    .side-panel {
+        width: 100vw;
+        max-width: 100vw;
+        right: -100vw;
+        top: 0;
+        height: 100vh;
+        border-radius: 0;
+        margin: 0;
+    }
+    .side-panel.active { right: 0; }
+    .side-panel-header { padding: 16px 18px; }
+    .side-panel-body { padding: 16px 18px 18px; gap: 14px; }
+    .side-panel-footer { padding: 14px 18px 18px; }
+
+    /* Candidate page header — stack title + actions */
+    .cd-page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .candidate-actions { flex-wrap: wrap; }
+
+    /* Candidates page header — stack search/add */
+    .candidates-screen-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .candidates-toolbar { flex-direction: column; align-items: stretch; }
+    .cand-search { width: 100%; }
+    .cand-search input { width: 100%; }
+    .cand-search input:focus { width: 100%; }
+
+    /* Jobs table — convert to stacked card per row */
+    .jobs-table-header { display: none; }
+    .job-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 14px;
+    }
+    .job-row > div { width: 100%; }
+    .progress-col { max-width: 100%; }
+    .applicants-col { justify-content: flex-start; }
+
+    /* Job pipeline: hide JD sidebar (could be expandable but keep simple) */
+    .job-desc-sidebar { display: none; }
+
+    /* Kanban: smaller columns so user can swipe */
+    .kanban-column { min-width: 240px; width: 240px; }
+
+    /* Settings: tighter section padding */
+    .settings-section { padding: 14px 16px; }
+    .settings-row { flex-direction: column; align-items: stretch; gap: 10px; }
+    .theme-toggle, .accent-picker { align-self: flex-start; }
+
+    /* Login: tighter container */
+    .login-container { padding: 28px 22px; max-width: 92vw; }
+
+    /* Calendar: smaller cells, scroll horizontally if too tight */
+    .calendar-grid { font-size: 0.7rem; }
+    .calendar-day { min-height: 70px; padding: 6px; }
+
+    /* Job details top row stack */
+    .job-details-top-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .btn-add-candidate { justify-content: center; }
+
+    /* Hide candidate-details context line if it crowds the actions */
+    .cd-page-header > .cd-context { display: none; }
+}
+
+/* Sidebar overlay — tied to body class so we don't need a real DOM node */
+@media (max-width: 768px) {
+    body.sidebar-open::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(4px);
+        z-index: 2050;
+        animation: sidebarOverlayIn 0.25s ease forwards;
+    }
+
+    @keyframes sidebarOverlayIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+    }
+}
+
+/* =========================================================
+   RESPONSIVE — Small mobile (≤ 480px)
+   ========================================================= */
+@media (max-width: 480px) {
+    /* Tighter typography */
+    .topbar h1 { font-size: 0.95rem; }
+    .topbar { padding: 0 10px; }
+
+    .page-view { padding: 12px 10px; }
+
+    /* Single-column info grid even at small size */
+    #candidate-details-screen .cd-info-grid,
+    .info-grid { grid-template-columns: 1fr; }
+
+    /* Salary row: stack at very small widths */
+    .form-row.salary-row { grid-template-columns: 1fr; }
+
+    /* Kanban columns become full-width minus padding */
+    .kanban-column { min-width: 86vw; width: 86vw; }
+
+    /* Action button labels can wrap or shrink */
+    .btn-glass-action { font-size: 0.78rem; padding: 8px 12px; }
+
+    /* Hero in panel stacks */
+    .interview-hero,
+    .cd-hero {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .cd-hero-info { text-align: center; }
+    .cd-hero-meta { justify-content: center; }
+    .cd-score-block,
+    .ai-score-ring { align-self: center; }
+
+    /* Candidate page actions */
+    .candidate-actions { flex-direction: column; }
+    .candidate-actions .btn-glass-action { width: 100%; }
+}
+
+/* =========================================================
+   Higher-specificity body[data-theme="light"] overrides
+   Belt-and-suspenders against any later rule that shadowed
+   the [data-theme="light"] block above.
+   ========================================================= */
+
+/* Activity timeline body text — forced dark */
+body[data-theme="light"] .activity-content p,
+body[data-theme="light"] .activity-content {
+    color: #1a2030;
+}
+
+body[data-theme="light"] .activity-content strong {
+    color: #0a0c10;
+}
+
+/* Cyan span links inside activity should darken slightly for AA contrast */
+body[data-theme="light"] .activity-content span {
+    color: #008498;
+    font-weight: 600;
+}
+
+/* Glass panels — clean opaque white with soft ambient shadow
+   (matches the reference: solid cards, no transparent muddiness) */
+body[data-theme="light"] .glass-panel {
+    background: rgba(255, 255, 255, 0.92);
+    border-color: rgba(13, 17, 23, 0.06);
+    box-shadow:
+        0 8px 24px rgba(20, 60, 80, 0.06),
+        0 1px 0 rgba(255, 255, 255, 0.95) inset;
+}
+
+/* Sidebar — subtle mint tint instead of plain white */
+body[data-theme="light"] .sidebar.glass-panel-no-border,
+body[data-theme="light"] .glass-panel-no-border {
+    background: linear-gradient(180deg,
+        rgba(220, 240, 232, 0.55) 0%,
+        rgba(232, 244, 240, 0.45) 100%);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+}
+
+/* Sidebar text — force dark, since rgba-white inactive nav items vanish on light */
+body[data-theme="light"] .nav-item {
+    color: #4d5666;
+}
+body[data-theme="light"] .nav-item:hover {
+    color: #0a0c10;
+    background: rgba(13, 17, 23, 0.06);
+}
+body[data-theme="light"] .nav-item.active {
+    color: #0a0c10;
+}
+body[data-theme="light"] .sidebar-header h2 { color: #0a0c10; }
+
+/* Topbar — readable text + visible borders */
+body[data-theme="light"] .topbar h1 { color: #0a0c10; }
+body[data-theme="light"] .search-bar input {
+    color: #0a0c10;
+}
+body[data-theme="light"] .search-bar input::placeholder {
+    color: rgba(13, 17, 23, 0.40);
+}
+body[data-theme="light"] .search-bar i { color: #4d5666; }
+body[data-theme="light"] .user-profile { border-left-color: rgba(13, 17, 23, 0.12); }
+
+/* Panel header titles */
+body[data-theme="light"] .panel-header h3 { color: #0a0c10; }
+
+/* Recent Updates timeline rail — was rgba-white invisible */
+body[data-theme="light"] .activity-timeline::before {
+    background: linear-gradient(to bottom, rgba(13, 17, 23, 0.12), rgba(13, 17, 23, 0.02));
+}
+
+/* Activity-content pill (the per-message bubble) — needs background contrast */
+body[data-theme="light"] .activity-content {
+    background: rgba(13, 17, 23, 0.04);
+    border: 1px solid rgba(13, 17, 23, 0.06);
+}
+
+/* Priority Roles + step pipeline — base dashes more visible */
+body[data-theme="light"] .p-step {
+    background: rgba(13, 17, 23, 0.12);
+}
+
+/* Smart Alerts — stronger surface so the row reads as a card */
+body[data-theme="light"] .snapshot-card {
+    background: rgba(13, 17, 23, 0.04);
+    border-color: rgba(13, 17, 23, 0.10);
+}
+
+/* Topbar h1 already adapts via override above; re-confirm Main Dashboard reads dark */
+body[data-theme="light"] #page-title { color: #0a0c10; }
+
+/* KPI titles use --text-secondary which adapts; the icons stay neon. Good. */
+
+/* Strong values that hardcoded #fff — ensure they're pure dark in light */
+body[data-theme="light"] .kpi-value,
+body[data-theme="light"] .insight-value,
+body[data-theme="light"] .cand-insight-value,
+body[data-theme="light"] .role-stats .count,
+body[data-theme="light"] .snapshot-data .count,
+body[data-theme="light"] .small-donut-text,
+body[data-theme="light"] .interviewer-info span,
+body[data-theme="light"] .candidate-info h4,
+body[data-theme="light"] .priority-role-item h4,
+body[data-theme="light"] .dash-interview-item .time-block .time,
+body[data-theme="light"] .interview-info h4,
+body[data-theme="light"] .card-info h5,
+body[data-theme="light"] .card-tags span,
+body[data-theme="light"] .timeline-item-info h4,
+body[data-theme="light"] .meeting-link-url,
+body[data-theme="light"] .ai-card-label h4,
+body[data-theme="light"] .pill-info .name,
+body[data-theme="light"] .cd-hero-info h3,
+body[data-theme="light"] .cd-section-title,
+body[data-theme="light"] .cd-link-label,
+body[data-theme="light"] .cd-highlight,
+body[data-theme="light"] .cd-timeline-info h4,
+body[data-theme="light"] .cd-tab-btn.active {
+    color: #0a0c10;
+}
+
+body[data-theme="light"] .card-score .score-val { color: #0a0c10 !important; }
+
+/* Score-label / interviewer label / etc. — secondary text */
+body[data-theme="light"] .candidate-info p,
+body[data-theme="light"] .interview-info p,
+body[data-theme="light"] .timeline-item-info p,
+body[data-theme="light"] .card-info p,
+body[data-theme="light"] .interviewer-info .label,
+body[data-theme="light"] .cd-link-url,
+body[data-theme="light"] .cd-timeline-info p,
+body[data-theme="light"] .role-stats .label,
+body[data-theme="light"] .snapshot-data .label,
+body[data-theme="light"] .cand-insight-label,
+body[data-theme="light"] .insight-trend .trend-label,
+body[data-theme="light"] .timestamp,
+body[data-theme="light"] .meeting-link-label,
+body[data-theme="light"] .candidates-screen-header p,
+body[data-theme="light"] .settings-row-info p,
+body[data-theme="light"] .cd-context,
+body[data-theme="light"] .interview-meta {
+    color: #4d5666;
+}
+
+/* Card / row background floors — opaque white frosted surfaces with depth */
+body[data-theme="light"] .candidate-card,
+body[data-theme="light"] .interview-card,
+body[data-theme="light"] .dash-interview-item,
+body[data-theme="light"] .snapshot-card,
+body[data-theme="light"] .priority-role-item,
+body[data-theme="light"] .info-cell,
+body[data-theme="light"] .interviewer-pill,
+body[data-theme="light"] .meeting-card,
+body[data-theme="light"] .cd-section,
+body[data-theme="light"] .cd-link-row,
+body[data-theme="light"] .stage-pill,
+body[data-theme="light"] .form-input,
+body[data-theme="light"] .job-row,
+body[data-theme="light"] .candidates-grid .candidate-card,
+body[data-theme="light"] .upload-zone {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(13, 17, 23, 0.06);
+    box-shadow: 0 4px 14px rgba(20, 60, 80, 0.08),
+                0 1px 0 rgba(255, 255, 255, 0.95) inset;
+}
+
+/* Hover lifts — clearer elevation on the mint bg */
+body[data-theme="light"] .candidate-card:hover,
+body[data-theme="light"] .interview-card:hover,
+body[data-theme="light"] .dash-interview-item:hover,
+body[data-theme="light"] .snapshot-card:hover,
+body[data-theme="light"] .priority-role-item:hover,
+body[data-theme="light"] .info-cell:hover,
+body[data-theme="light"] .interviewer-pill:hover,
+body[data-theme="light"] .meeting-card:hover,
+body[data-theme="light"] .cd-link-row:hover {
+    background: rgba(255, 255, 255, 0.98);
+    border-color: rgba(13, 17, 23, 0.10);
+    box-shadow: 0 14px 36px rgba(20, 60, 80, 0.16),
+                0 1px 0 rgba(255, 255, 255, 0.95) inset;
+}
+
+/* =========================================================
+   Dark-mode resting shadows — every card/row gets subtle depth
+   so it lifts from the dark page bg.
+   ========================================================= */
+.candidate-card,
+.interview-card,
+.dash-interview-item,
+.snapshot-card,
+.priority-role-item,
+.info-cell,
+.interviewer-pill,
+.meeting-card,
+.cd-section,
+.cd-link-row,
+.job-row {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+.glass-panel {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32),
+                0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+/* Larger panels (KPI / insight / setting / cand-insight) get pronounced ambient depth */
+.kpi-card,
+.insight-card,
+.cand-insight,
+.settings-section {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32),
+                0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+body[data-theme="light"] .glass-panel,
+body[data-theme="light"] .kpi-card,
+body[data-theme="light"] .insight-card,
+body[data-theme="light"] .cand-insight,
+body[data-theme="light"] .settings-section {
+    box-shadow: 0 10px 28px rgba(20, 60, 80, 0.10),
+                0 1px 0 rgba(255, 255, 255, 0.95) inset;
+}
+
+/* =========================================================
+   Action buttons — make every primary control read as a
+   crisp white pill with its accent ring intact.
+   The reference uses solid white pills; our buttons keep their
+   semantic tone (cyan/blue/green/red) on the border + icon,
+   while the surface itself becomes opaque white.
+   ========================================================= */
+body[data-theme="light"] .btn-glass-action,
+body[data-theme="light"] .btn-add-candidate,
+body[data-theme="light"] .btn-cal-action,
+body[data-theme="light"] .btn-cancel-interview,
+body[data-theme="light"] .btn-reschedule,
+body[data-theme="light"] .btn-save-candidate,
+body[data-theme="light"] .btn-manage {
+    background: rgba(255, 255, 255, 0.88);
+    color: var(--text-primary);
+    box-shadow:
+        0 2px 8px rgba(20, 60, 80, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+/* Hover: bump opacity to fully solid white + brighter shadow */
+body[data-theme="light"] .btn-glass-action:hover,
+body[data-theme="light"] .btn-add-candidate:hover,
+body[data-theme="light"] .btn-cal-action:hover,
+body[data-theme="light"] .btn-cancel-interview:hover,
+body[data-theme="light"] .btn-reschedule:hover,
+body[data-theme="light"] .btn-save-candidate:hover {
+    background: rgba(255, 255, 255, 1);
+}
+
+/* Topbar icon-buttons (chat, bell) — pill on mint */
+body[data-theme="light"] .icon-btn {
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(13, 17, 23, 0.06);
+}
+body[data-theme="light"] .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--text-primary);
+}
+
+/* Search bar in topbar — solid white pill */
+body[data-theme="light"] .search-bar {
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(13, 17, 23, 0.06);
+    box-shadow: 0 2px 6px rgba(20, 60, 80, 0.04);
+}
+
+/* User profile area — same white pill treatment */
+body[data-theme="light"] .user-profile {
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(13, 17, 23, 0.06);
+    border-radius: 999px;
+    padding: 4px 14px 4px 4px;
+    border-left: 1px solid rgba(13, 17, 23, 0.06);
+}
+
+/* Hamburger menu toggle (mobile) */
+body[data-theme="light"] .menu-toggle {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(13, 17, 23, 0.06);
+}
+
+/* Back button — match the same pill aesthetic */
+body[data-theme="light"] .back-btn {
+    background: rgba(255, 255, 255, 0.85);
+    border-color: rgba(13, 17, 23, 0.08);
+}
+body[data-theme="light"] .back-btn:hover {
+    background: rgba(255, 255, 255, 1);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* Form input + select — visible on light glass */
+body[data-theme="light"] .form-input {
+    background: rgba(255, 255, 255, 0.75);
+    border-color: rgba(13, 17, 23, 0.14);
+    color: #0a0c10;
+}
+
+body[data-theme="light"] .form-input::placeholder { color: rgba(13, 17, 23, 0.36); }
+
+body[data-theme="light"] .form-input:focus {
+    background: #ffffff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.16);
+}
+
+/* Settings sections — frostier white */
+body[data-theme="light"] .settings-section {
+    background: rgba(255, 255, 255, 0.78);
+}
+
+/* Side panel chrome — ensure header/body text reads on white */
+body[data-theme="light"] .side-panel h2,
+body[data-theme="light"] .side-panel h3,
+body[data-theme="light"] .side-panel h4 {
+    color: #0a0c10;
+}
+
+body[data-theme="light"] .side-panel p {
+    color: #4d5666;
 }

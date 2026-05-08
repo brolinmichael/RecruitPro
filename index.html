@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="css/calendar.css">
     <link rel="stylesheet" href="css/pipeline.css">
     <link rel="stylesheet" href="css/candidate.css">
+    <link rel="stylesheet" href="css/settings.css">
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
@@ -98,6 +99,7 @@
             <!-- Topbar -->
             <header class="topbar">
                 <div class="topbar-left">
+                    <button id="menu-toggle" class="menu-toggle" type="button" aria-label="Open menu"><i data-lucide="menu"></i></button>
                     <button id="back-button" class="back-btn" style="display: none;"><i data-lucide="arrow-left"></i></button>
                     <h1 id="page-title">Main Dashboard</h1>
                 </div>
@@ -383,8 +385,8 @@
                 </div>
             </div>
             <div id="jobs-screen" class="page-view" style="display: none;">
-                    <div class="action-bar" style="display:flex;justify-content:flex-end;margin-bottom:12px;">
-                        <button type="button" class="btn-add-candidate"><i data-lucide="plus"></i> <span>Create New Job</span></button>
+                    <div class="action-bar">
+                        <button type="button" class="btn-add-candidate" id="open-create-job"><i data-lucide="plus"></i> <span>Create New Job</span></button>
                     </div>
                     <div class="section-title">Recent Insights</div>
                 <div class="insights-grid">
@@ -445,8 +447,8 @@
                                 <div class="small-donut-text">88%</div>
                             </div>
                         </div>
-                        <div style="font-size: 0.75rem; color: var(--text-secondary); text-align: center; margin-top: 8px;">
-                            <span class="text-cyan">• 88% Accepted</span> &nbsp; <span>• 12% Declined</span>
+                        <div class="donut-legend">
+                            <span class="text-cyan">• 88% Accepted</span> <span>• 12% Declined</span>
                         </div>
                     </div>
                 </div>
@@ -454,10 +456,10 @@
                 <div class="section-title">Active Jobs</div>
                 <div class="active-jobs-section">
                     <!-- Table Header -->
-                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr auto; padding: 0 20px; color: var(--text-secondary); font-size: 0.85rem; font-weight: 500;">
+                    <div class="jobs-table-header">
                         <div>Job Title</div>
                         <div>Department</div>
-                        <div>Applicants <i data-lucide="chevron-down" style="width:14px;height:14px;vertical-align:middle;"></i></div>
+                        <div>Applicants <i data-lucide="chevron-down" style="width:12px;height:12px;vertical-align:middle;"></i></div>
                         <div>Stage</div>
                         <div>Progress</div>
                         <div style="text-align:center;">Actions</div>
@@ -585,11 +587,11 @@
                             <!-- Row 1 -->
                             <div class="calendar-day prev-month"><span class="day-number">27</span></div>
                             <div class="calendar-day prev-month"><span class="day-number">28</span></div>
-                            <div class="calendar-day day-active">
+                            <div class="calendar-day day-active day-today">
                                 <span class="day-number">29</span>
-                                <div class="cal-event cal-event-cyan">
-                                    <div class="event-time">10:00 AM - Liam Chen</div>
-                                    <div style="color: var(--text-secondary); margin-top:2px;">(Product Design)</div>
+                                <div class="cal-event cal-event-cyan clickable" data-interview-id="cal-1">
+                                    <div class="event-time">10:00 AM · Liam Chen</div>
+                                    <div class="event-sub">Product Design</div>
                                     <div class="event-details">
                                         <span>w/ Sarah J.</span>
                                         <img src="https://ui-avatars.com/api/?name=Sarah+J&background=random" alt="Sarah">
@@ -602,32 +604,34 @@
                             <div class="calendar-day"><span class="day-number">03</span></div>
 
                             <!-- Row 2 -->
-                            <div class="calendar-day"><span class="day-number">07</span></div>
-                            <div class="calendar-day"><span class="day-number">08</span></div>
+                            <div class="calendar-day"><span class="day-number">04</span></div>
+                            <div class="calendar-day"><span class="day-number">05</span></div>
                             <div class="calendar-day day-active">
-                                <span class="day-number">29</span> <!-- From image, seems to repeat dates weirdly, I'll fix the numbering naturally -->
-                                <div class="cal-event cal-event-purple">
-                                    <div class="event-time">1:30 PM - Aisha Khan</div>
-                                    <div style="color: var(--text-secondary); margin-top:2px;">(Data Science)</div>
+                                <span class="day-number">06</span>
+                                <div class="cal-event cal-event-purple clickable" data-interview-id="cal-2">
+                                    <div class="event-time">1:30 PM · Aisha Khan</div>
+                                    <div class="event-sub">Data Science</div>
                                     <div class="event-details">
                                         <span>w/ David K.</span>
                                         <img src="https://ui-avatars.com/api/?name=David+K&background=random" alt="David">
                                     </div>
                                 </div>
                             </div>
-                            <div class="calendar-day"><span class="day-number">30</span></div>
+                            <div class="calendar-day"><span class="day-number">07</span></div>
+                            <div class="calendar-day"><span class="day-number">08</span></div>
+                            <div class="calendar-day"><span class="day-number">09</span></div>
                             <div class="calendar-day"><span class="day-number">10</span></div>
-                            <div class="calendar-day"><span class="day-number">11</span></div>
-                            <div class="calendar-day"><span class="day-number">12</span></div>
 
                             <!-- Row 3 -->
+                            <div class="calendar-day"><span class="day-number">11</span></div>
+                            <div class="calendar-day"><span class="day-number">12</span></div>
                             <div class="calendar-day"><span class="day-number">13</span></div>
                             <div class="calendar-day"><span class="day-number">14</span></div>
                             <div class="calendar-day day-active">
                                 <span class="day-number">15</span>
-                                <div class="cal-event cal-event-cyan">
-                                    <div class="event-time">1:30 PM - Aisha Khan</div>
-                                    <div style="color: var(--text-secondary); margin-top:2px;">(Data Science)</div>
+                                <div class="cal-event cal-event-cyan clickable" data-interview-id="cal-3">
+                                    <div class="event-time">1:30 PM · Aisha Khan</div>
+                                    <div class="event-sub">Data Science</div>
                                     <div class="event-details">
                                         <span>w/ David K.</span>
                                         <img src="https://ui-avatars.com/api/?name=David+K&background=random" alt="David">
@@ -636,17 +640,17 @@
                             </div>
                             <div class="calendar-day"><span class="day-number">16</span></div>
                             <div class="calendar-day"><span class="day-number">17</span></div>
+
+                            <!-- Row 4 -->
                             <div class="calendar-day"><span class="day-number">18</span></div>
                             <div class="calendar-day"><span class="day-number">19</span></div>
-                            
-                            <!-- Row 4 -->
                             <div class="calendar-day"><span class="day-number">20</span></div>
                             <div class="calendar-day"><span class="day-number">21</span></div>
                             <div class="calendar-day day-active">
                                 <span class="day-number">22</span>
-                                <div class="cal-event cal-event-cyan">
-                                    <div class="event-time">1:00 PM - Liam Chen</div>
-                                    <div style="color: var(--text-secondary); margin-top:2px;">(Product Design)</div>
+                                <div class="cal-event cal-event-cyan clickable" data-interview-id="cal-4">
+                                    <div class="event-time">1:00 PM · Liam Chen</div>
+                                    <div class="event-sub">Product Design</div>
                                     <div class="event-details">
                                         <span>w/ Sarah J.</span>
                                         <img src="https://ui-avatars.com/api/?name=Sarah+J&background=random" alt="Sarah">
@@ -655,8 +659,6 @@
                             </div>
                             <div class="calendar-day"><span class="day-number">23</span></div>
                             <div class="calendar-day"><span class="day-number">24</span></div>
-                            <div class="calendar-day"><span class="day-number">25</span></div>
-                            <div class="calendar-day"><span class="day-number">26</span></div>
 
                         </div>
                     </div>
@@ -670,38 +672,38 @@
 
                         <div class="interviews-grid">
                             <div class="glass-panel interview-card">
-                                <span class="text-secondary" style="font-size:0.8rem;">1.</span>
+                                <span class="interview-card-index">01</span>
                                 <div class="interview-card-header">
                                     <img src="https://ui-avatars.com/api/?name=Liam+C&background=random" alt="Candidate">
                                     <img src="https://ui-avatars.com/api/?name=Sarah+J&background=random" alt="Interviewer">
                                 </div>
                                 <div class="interview-info">
-                                    <h4>10:00 AM - Liam Chen</h4>
+                                    <h4>10:00 AM · Liam Chen</h4>
                                     <p>Senior Product Designer</p>
                                 </div>
                                 <div class="interview-meta">
-                                    <div>Interviewer - <span>Onsite</span></div>
+                                    <div>Interviewer · <span>Onsite</span></div>
                                 </div>
                                 <div class="interview-actions">
-                                    <button class="btn-primary" style="background: rgba(255,255,255,0.02);">Interview Details</button>
+                                    <button type="button" class="btn-cal-action" data-interview-id="sidebar-1"><i data-lucide="calendar-clock"></i> Interview Details</button>
                                 </div>
                             </div>
 
                             <div class="glass-panel interview-card">
-                                <span class="text-secondary" style="font-size:0.8rem;">2.</span>
+                                <span class="interview-card-index">02</span>
                                 <div class="interview-card-header">
                                     <img src="https://ui-avatars.com/api/?name=Aisha+K&background=random" alt="Candidate">
                                     <img src="https://ui-avatars.com/api/?name=David+K&background=random" alt="Interviewer">
                                 </div>
                                 <div class="interview-info">
-                                    <h4>1:30 PM - Aisha Khan</h4>
+                                    <h4>1:30 PM · Aisha Khan</h4>
                                     <p>Data Scientist II</p>
                                 </div>
                                 <div class="interview-meta">
-                                    <div>Meeting Links - <span class="text-cyan">Video Call</span></div>
+                                    <div>Meeting · <span class="text-cyan">Video Call</span></div>
                                 </div>
                                 <div class="interview-actions">
-                                    <button class="btn-primary" style="background: rgba(255,255,255,0.02);">Join Call</button>
+                                    <button type="button" class="btn-cal-action" data-interview-id="sidebar-2"><i data-lucide="video"></i> Join Call</button>
                                 </div>
                             </div>
                         </div>
@@ -1222,9 +1224,86 @@
             <!-- Candidates Screen -->
             <div id="candidates-screen" class="page-view" style="display: none;">
                 <div class="candidates-screen-header">
-                    <h2>Candidates</h2>
-                    <p>Manage and view all your candidates in one place.</p>
+                    <div>
+                        <h2>Candidates</h2>
+                        <p>Manage and view all your candidates in one place.</p>
+                    </div>
+                    <div class="candidates-toolbar">
+                        <div class="cand-search">
+                            <i data-lucide="search"></i>
+                            <input type="text" placeholder="Search candidates…">
+                        </div>
+                        <button type="button" class="btn-add-candidate" id="open-add-candidate-from-list"><i data-lucide="user-plus"></i> <span>Add Candidate</span></button>
+                    </div>
                 </div>
+
+                <!-- Insights strip -->
+                <div class="candidates-insights">
+                    <div class="glass-panel cand-insight cand-insight-cyan">
+                        <div class="cand-insight-header">
+                            <span class="cand-insight-title"><i data-lucide="users"></i> Total Candidates</span>
+                            <i data-lucide="more-vertical" class="text-secondary"></i>
+                        </div>
+                        <div class="cand-insight-value-row">
+                            <span class="cand-insight-value">1,154</span>
+                            <span class="cand-insight-trend trend-up">+82</span>
+                        </div>
+                        <div class="cand-insight-chart">
+                            <svg width="100%" height="100%" viewBox="0 0 100 30" preserveAspectRatio="none">
+                                <path class="sparkline-path" d="M0 25 C20 22, 30 18, 50 14 C70 10, 80 8, 100 5" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel cand-insight cand-insight-purple">
+                        <div class="cand-insight-header">
+                            <span class="cand-insight-title"><i data-lucide="sparkles"></i> Avg AI Match</span>
+                            <i data-lucide="more-vertical" class="text-secondary"></i>
+                        </div>
+                        <div class="cand-insight-value-row">
+                            <span class="cand-insight-value">87%</span>
+                            <span class="cand-insight-trend trend-up">+3 pts</span>
+                        </div>
+                        <div class="cand-insight-chart">
+                            <svg width="100%" height="100%" viewBox="0 0 100 30" preserveAspectRatio="none">
+                                <path class="sparkline-path" d="M0 22 C20 20, 30 18, 50 16 C70 14, 80 12, 100 10" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel cand-insight cand-insight-green">
+                        <div class="cand-insight-header">
+                            <span class="cand-insight-title"><i data-lucide="check-circle-2"></i> Shortlisted</span>
+                            <i data-lucide="more-vertical" class="text-secondary"></i>
+                        </div>
+                        <div class="cand-insight-value-row">
+                            <span class="cand-insight-value">128</span>
+                            <span class="cand-insight-trend trend-up">11% conv.</span>
+                        </div>
+                        <div class="cand-insight-chart">
+                            <svg width="100%" height="100%" viewBox="0 0 100 30" preserveAspectRatio="none">
+                                <path class="sparkline-path" d="M0 24 C20 21, 30 25, 50 18 C70 12, 80 14, 100 8" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel cand-insight cand-insight-blue">
+                        <div class="cand-insight-header">
+                            <span class="cand-insight-title"><i data-lucide="link-2"></i> Top Source</span>
+                            <i data-lucide="more-vertical" class="text-secondary"></i>
+                        </div>
+                        <div class="cand-insight-value-row">
+                            <span class="cand-insight-value">LinkedIn</span>
+                            <span class="cand-insight-trend">42%</span>
+                        </div>
+                        <div class="cand-insight-chart">
+                            <svg width="100%" height="100%" viewBox="0 0 100 30" preserveAspectRatio="none">
+                                <path class="sparkline-path" d="M0 22 C20 20, 30 14, 50 16 C70 18, 80 8, 100 12" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="candidates-grid">
                     <!-- Candidate 1 -->
                     <div class="candidate-card" onclick="navigateTo('candidate-details-screen')">
@@ -1379,121 +1458,321 @@
                 </div>
             </div>
 
+            <!-- Settings Screen -->
+            <div id="settings-screen" class="page-view" style="display: none;">
+                <div class="settings-header">
+                    <h2>Settings</h2>
+                    <p>Customize your RecruitHub experience.</p>
+                </div>
+
+                <div class="settings-grid">
+                    <!-- Appearance -->
+                    <section class="glass-panel settings-section">
+                        <div class="settings-section-header">
+                            <span class="settings-section-title"><i data-lucide="palette"></i> Appearance</span>
+                        </div>
+
+                        <div class="settings-row">
+                            <div class="settings-row-info">
+                                <h4>Theme</h4>
+                                <p>Switch between dark and light mode. Your choice is saved to this device.</p>
+                            </div>
+                            <div class="theme-toggle" role="radiogroup" aria-label="Theme">
+                                <button type="button" class="theme-option" data-theme="dark" role="radio" aria-checked="true">
+                                    <i data-lucide="moon"></i> Dark
+                                </button>
+                                <button type="button" class="theme-option" data-theme="light" role="radio" aria-checked="false">
+                                    <i data-lucide="sun"></i> Light
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="settings-row">
+                            <div class="settings-row-info">
+                                <h4>Accent Color</h4>
+                                <p>The signature highlight used for primary actions, focus rings, and active navigation.</p>
+                            </div>
+                            <div class="accent-picker" role="radiogroup" aria-label="Accent color">
+                                <button type="button" class="accent-swatch" data-accent="cyan"   style="--swatch:#00f0ff" aria-label="Cyan"   role="radio"><i data-lucide="check"></i></button>
+                                <button type="button" class="accent-swatch" data-accent="purple" style="--swatch:#b537f2" aria-label="Purple" role="radio"><i data-lucide="check"></i></button>
+                                <button type="button" class="accent-swatch" data-accent="green"  style="--swatch:#00ff88" aria-label="Green"  role="radio"><i data-lucide="check"></i></button>
+                                <button type="button" class="accent-swatch" data-accent="blue"   style="--swatch:#3a86ff" aria-label="Blue"   role="radio"><i data-lucide="check"></i></button>
+                                <button type="button" class="accent-swatch" data-accent="orange" style="--swatch:#fb923c" aria-label="Orange" role="radio"><i data-lucide="check"></i></button>
+                                <span class="accent-label" id="accent-label">Cyan</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Notifications -->
+                    <section class="glass-panel settings-section">
+                        <div class="settings-section-header">
+                            <span class="settings-section-title"><i data-lucide="bell"></i> Notifications</span>
+                        </div>
+
+                        <div class="settings-row">
+                            <div class="settings-row-info">
+                                <h4>Email notifications</h4>
+                                <p>Get an email when a candidate progresses or a new application arrives.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="settings-row">
+                            <div class="settings-row-info">
+                                <h4>Desktop alerts</h4>
+                                <p>Native browser notifications for live interview events.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="settings-row">
+                            <div class="settings-row-info">
+                                <h4>Weekly digest</h4>
+                                <p>Sunday summary of pipeline activity, AI insights, and shortlists.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </section>
+
+                    <!-- Profile -->
+                    <section class="glass-panel settings-section">
+                        <div class="settings-section-header">
+                            <span class="settings-section-title"><i data-lucide="user"></i> Profile</span>
+                        </div>
+
+                        <div class="settings-form-grid">
+                            <div class="form-field">
+                                <label for="set-name">Display Name</label>
+                                <input type="text" id="set-name" class="form-input" value="Brolin Michael">
+                            </div>
+                            <div class="form-field">
+                                <label for="set-email">Email</label>
+                                <input type="email" id="set-email" class="form-input" value="brolin@recruithub.app">
+                            </div>
+                            <div class="form-field">
+                                <label for="set-role">Role</label>
+                                <input type="text" id="set-role" class="form-input" value="Senior Recruiter">
+                            </div>
+                            <div class="form-field">
+                                <label for="set-tz">Time Zone</label>
+                                <select id="set-tz" class="form-input form-select">
+                                    <option>America/Los_Angeles</option>
+                                    <option>America/New_York</option>
+                                    <option>Europe/London</option>
+                                    <option selected>Asia/Bangalore</option>
+                                </select>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
             <!-- Candidate Details Screen -->
             <div id="candidate-details-screen" class="page-view" style="display: none;">
-                <div class="candidate-layout">
-                    <!-- Left Sidebar -->
-                    <div class="profile-sidebar">
-                        <i data-lucide="more-vertical" class="profile-actions-menu"></i>
-                        <div class="profile-avatar-wrapper">
-                            <img src="https://ui-avatars.com/api/?name=Eleanor+Vance&background=random&size=200" alt="Eleanor Vance" class="profile-avatar">
-                        </div>
-                        <h2>Eleanor Vance</h2>
-                        <div class="profile-role">Senior Frontend Engineer</div>
-                        <div class="profile-location"><i data-lucide="map-pin"></i> San Francisco, CA</div>
+                <!-- Actions toolbar (page title comes from the topbar) -->
+                <div class="cd-page-header">
+                    <span class="cd-context"><i data-lucide="briefcase"></i> Reviewing for <strong>Senior Frontend Engineer</strong> · Round 2</span>
+                    <div class="candidate-actions">
+                        <button type="button" class="btn-glass-action tone-ai"><i data-lucide="sparkles"></i> <span>Find Similar</span></button>
+                        <button type="button" class="btn-glass-action tone-blue"><i data-lucide="mail"></i> <span>Message</span></button>
+                        <button type="button" class="btn-glass-action tone-cyan"><i data-lucide="calendar-plus"></i> <span>Request Interview</span></button>
+                        <button type="button" class="btn-glass-action tone-green"><i data-lucide="file-down"></i> <span>Download CV</span></button>
+                        <button type="button" class="btn-glass-action tone-icon" aria-label="More"><i data-lucide="more-horizontal"></i></button>
+                    </div>
+                </div>
 
-                        <div class="contact-info">
-                            <div class="contact-item">
-                                <i data-lucide="mail"></i> Email: <span class="text-white">e.vance@email.com</span>
-                            </div>
-                            <div class="contact-item">
-                                <i data-lucide="phone"></i> Phone: <span class="text-white">(555) 123-4567</span>
-                            </div>
-                            <div class="contact-item">
-                                <i data-lucide="linkedin"></i> LinkedIn
-                            </div>
-                            <div class="contact-item">
-                                <i data-lucide="folder"></i> Portfolio
+                <div class="cd-content">
+                    <!-- Hero -->
+                    <div class="cd-hero">
+                        <div class="cd-hero-avatar-wrap">
+                            <img src="https://ui-avatars.com/api/?name=Eleanor+Vance&background=random&size=200" alt="Eleanor Vance" class="cd-hero-avatar">
+                            <span class="cd-hero-status-dot" aria-label="Active"></span>
+                        </div>
+                        <div class="cd-hero-info">
+                            <h3>Eleanor Vance</h3>
+                            <p>Senior Frontend Engineer</p>
+                            <div class="cd-hero-meta">
+                                <span class="cd-hero-chip"><i data-lucide="map-pin"></i> San Francisco, CA</span>
+                                <span class="cd-hero-chip cd-chip-active"><span class="cd-chip-dot"></span> Active</span>
+                                <span class="cd-hero-chip cd-chip-stage"><i data-lucide="layers"></i> Round 2 · Interview</span>
+                                <span class="cd-hero-chip cd-chip-fit"><i data-lucide="zap"></i> Strong Fit</span>
                             </div>
                         </div>
-
-                        <div class="ai-match-section">
-                            <h4>AI Match Score</h4>
-                            <div class="radial-progress-wrapper">
-                                <svg class="radial-progress-svg" viewBox="0 0 100 100">
+                        <div class="cd-score-block">
+                            <div class="cd-score-ring">
+                                <svg class="cd-score-ring-svg" viewBox="0 0 100 100" aria-hidden="true">
                                     <defs>
-                                        <linearGradient id="cyanPurpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                            <stop offset="0%" stop-color="var(--neon-cyan)" />
-                                            <stop offset="100%" stop-color="var(--neon-purple)" />
+                                        <linearGradient id="candidateScoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stop-color="#00f0ff"/>
+                                            <stop offset="100%" stop-color="#b537f2"/>
                                         </linearGradient>
                                     </defs>
-                                    <circle class="radial-bg" cx="50" cy="50" r="45" />
-                                    <circle class="radial-value" cx="50" cy="50" r="45" />
+                                    <circle class="cd-score-ring-bg" cx="50" cy="50" r="40"/>
+                                    <circle class="cd-score-ring-progress" cx="50" cy="50" r="40"/>
                                 </svg>
-                                <div class="radial-text">
-                                    <h3>95%</h3>
-                                    <p>AI MATCH SCORE</p>
+                                <div class="cd-score-text">
+                                    <span class="cd-score-value">95<small>%</small></span>
+                                    <span class="cd-score-label">AI Match</span>
                                 </div>
                             </div>
-                            <div class="match-status">Strong Fit</div>
                         </div>
                     </div>
 
-                    <!-- Right Main Content -->
-                    <div class="candidate-main">
-                        <div class="candidate-header">
-                            <h2>Candidate Profile</h2>
-                            <div class="candidate-actions">
-                                <button type="button" class="btn-glass-action tone-blue"><i data-lucide="mail"></i> <span>Message</span></button>
-                                <button type="button" class="btn-glass-action tone-cyan"><i data-lucide="calendar-plus"></i> <span>Request Interview</span></button>
-                                <button type="button" class="btn-glass-action tone-green"><i data-lucide="file-down"></i> <span>Download CV</span></button>
-                                <button type="button" class="btn-glass-action tone-icon" aria-label="More"><i data-lucide="more-horizontal"></i></button>
-                            </div>
+                    <!-- Quick Info Grid -->
+                    <div class="info-grid cd-info-grid">
+                        <div class="info-cell">
+                            <i data-lucide="mail" class="info-icon"></i>
+                            <span class="info-label">EMAIL</span>
+                            <span class="info-value">e.vance@email.com</span>
                         </div>
-
-                        <div class="candidate-tabs">
-                            <button class="tab-btn active">Resume</button>
-                            <button class="tab-btn">Timeline</button>
-                            <button class="tab-btn">Notes</button>
+                        <div class="info-cell">
+                            <i data-lucide="phone" class="info-icon"></i>
+                            <span class="info-label">PHONE</span>
+                            <span class="info-value">(555) 123-4567</span>
                         </div>
+                        <div class="info-cell">
+                            <i data-lucide="briefcase" class="info-icon"></i>
+                            <span class="info-label">EXPERIENCE</span>
+                            <span class="info-value">7 years</span>
+                        </div>
+                        <div class="info-cell">
+                            <i data-lucide="user-check" class="info-icon"></i>
+                            <span class="info-label">SOURCE</span>
+                            <span class="info-value">LinkedIn</span>
+                        </div>
+                    </div>
 
-                        <div class="resume-content">
-                            <div class="resume-section">
-                                <h3>Experience</h3>
-                                <div class="resume-box">
-                                    <div class="timeline-item">
-                                        <div class="timeline-item-info">
+                    <!-- Tab nav -->
+                    <div class="cd-tabs" role="tablist">
+                        <button type="button" class="cd-tab-btn active" role="tab">Resume</button>
+                        <button type="button" class="cd-tab-btn" role="tab">Timeline</button>
+                        <button type="button" class="cd-tab-btn" role="tab">Notes</button>
+                    </div>
+
+                    <!-- Two-column body -->
+                    <div class="cd-grid">
+                        <!-- Main column -->
+                        <div class="cd-col-main">
+                            <div class="cd-section">
+                                <div class="cd-section-header">
+                                    <span class="cd-section-title"><i data-lucide="briefcase"></i> Experience</span>
+                                </div>
+                                <div class="cd-timeline">
+                                    <div class="cd-timeline-item">
+                                        <span class="cd-timeline-dot"></span>
+                                        <div class="cd-timeline-info">
                                             <h4>Senior Frontend Engineer</h4>
                                             <p>Apex Solutions</p>
                                         </div>
-                                        <div class="timeline-duration">4 yrs</div>
+                                        <span class="cd-timeline-meta">4 yrs</span>
                                     </div>
-                                    <div class="timeline-item">
-                                        <div class="timeline-item-info">
+                                    <div class="cd-timeline-item">
+                                        <span class="cd-timeline-dot"></span>
+                                        <div class="cd-timeline-info">
                                             <h4>Frontend Developer</h4>
                                             <p>BrightTech</p>
                                         </div>
-                                        <div class="timeline-duration">3 yrs</div>
+                                        <span class="cd-timeline-meta">3 yrs</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="resume-section">
-                                <h3>Education</h3>
-                                <div class="resume-box">
-                                    <div class="timeline-item">
-                                        <div class="timeline-item-info">
+                            <div class="cd-section">
+                                <div class="cd-section-header">
+                                    <span class="cd-section-title"><i data-lucide="graduation-cap"></i> Education</span>
+                                </div>
+                                <div class="cd-timeline">
+                                    <div class="cd-timeline-item">
+                                        <span class="cd-timeline-dot"></span>
+                                        <div class="cd-timeline-info">
                                             <h4>M.S. Computer Science</h4>
-                                            <p>Stanford</p>
+                                            <p>Stanford University</p>
                                         </div>
                                     </div>
-                                    <div class="timeline-item">
-                                        <div class="timeline-item-info">
-                                            <h4>B.S. IT</h4>
-                                            <p>Berkeley</p>
+                                    <div class="cd-timeline-item">
+                                        <span class="cd-timeline-dot"></span>
+                                        <div class="cd-timeline-info">
+                                            <h4>B.S. Information Technology</h4>
+                                            <p>UC Berkeley</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="resume-section">
-                                <h3>Skills</h3>
-                                <div class="skills-container">
-                                    <span class="skill-tag">React.js</span>
-                                    <span class="skill-tag">Vue.js</span>
-                                    <span class="skill-tag">TypeScript</span>
-                                    <span class="skill-tag">UI/UX</span>
-                                    <span class="skill-tag">GraphQL</span>
+                            <div class="cd-section">
+                                <div class="cd-section-header">
+                                    <span class="cd-section-title"><i data-lucide="sparkles"></i> Skills</span>
+                                </div>
+                                <div class="cd-skills">
+                                    <span class="cd-skill-tag">React.js</span>
+                                    <span class="cd-skill-tag">Vue.js</span>
+                                    <span class="cd-skill-tag">TypeScript</span>
+                                    <span class="cd-skill-tag">UI/UX</span>
+                                    <span class="cd-skill-tag">GraphQL</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Side column -->
+                        <div class="cd-col-side">
+                            <div class="cd-section">
+                                <div class="cd-section-header">
+                                    <span class="cd-section-title"><i data-lucide="link-2"></i> Quick Links</span>
+                                </div>
+                                <div class="cd-link-list">
+                                    <a href="#" class="cd-link-row">
+                                        <div class="cd-link-icon icon-cyan"><i data-lucide="linkedin"></i></div>
+                                        <div class="cd-link-text">
+                                            <span class="cd-link-label">LinkedIn</span>
+                                            <span class="cd-link-url">linkedin.com/in/eleanor-vance</span>
+                                        </div>
+                                        <i data-lucide="external-link" class="cd-link-arrow"></i>
+                                    </a>
+                                    <a href="#" class="cd-link-row">
+                                        <div class="cd-link-icon icon-purple"><i data-lucide="folder"></i></div>
+                                        <div class="cd-link-text">
+                                            <span class="cd-link-label">Portfolio</span>
+                                            <span class="cd-link-url">eleanorvance.dev</span>
+                                        </div>
+                                        <i data-lucide="external-link" class="cd-link-arrow"></i>
+                                    </a>
+                                    <a href="#" class="cd-link-row">
+                                        <div class="cd-link-icon icon-green"><i data-lucide="github"></i></div>
+                                        <div class="cd-link-text">
+                                            <span class="cd-link-label">GitHub</span>
+                                            <span class="cd-link-url">github.com/evance</span>
+                                        </div>
+                                        <i data-lucide="external-link" class="cd-link-arrow"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="cd-section cd-ai-section">
+                                <div class="cd-section-header">
+                                    <span class="cd-section-title"><i data-lucide="sparkles"></i> AI Highlights</span>
+                                </div>
+                                <div class="cd-highlight-list">
+                                    <div class="cd-highlight">
+                                        <i data-lucide="check-circle-2"></i>
+                                        <span>Strong React + TypeScript fit</span>
+                                    </div>
+                                    <div class="cd-highlight">
+                                        <i data-lucide="check-circle-2"></i>
+                                        <span>Design-system experience</span>
+                                    </div>
+                                    <div class="cd-highlight">
+                                        <i data-lucide="check-circle-2"></i>
+                                        <span>7 yrs senior-level tenure</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1589,7 +1868,7 @@
             <!-- Interviewer Team -->
             <div class="panel-section">
                 <div class="panel-section-header">
-                    <span class="panel-section-title">Interviewer Team</span>
+                    <span class="panel-section-title"><i data-lucide="users"></i> Interviewer Team</span>
                     <button class="btn-text-cyan"><i data-lucide="user-plus"></i> Add</button>
                 </div>
                 <div class="interviewer-list">
@@ -1609,7 +1888,7 @@
             <!-- Meeting Details -->
             <div class="panel-section">
                 <div class="panel-section-header">
-                    <span class="panel-section-title">Meeting Details</span>
+                    <span class="panel-section-title"><i data-lucide="video"></i> Meeting Details</span>
                 </div>
                 <div class="meeting-card">
                     <div class="meeting-link-row">
@@ -1756,6 +2035,188 @@
             </button>
             <button type="submit" form="add-candidate-form" class="btn-save-candidate">
                 <i data-lucide="user-check"></i> Save Candidate
+            </button>
+        </div>
+    </div>
+
+    <!-- Create Job Slide-over -->
+    <div id="create-job-panel" class="side-panel">
+        <div class="side-panel-header">
+            <div class="header-left">
+                <div class="header-icon-wrap"><i data-lucide="briefcase"></i></div>
+                <div>
+                    <h2>Create Job</h2>
+                    <p>Open a new requisition for your team</p>
+                </div>
+            </div>
+            <button type="button" class="close-panel" data-close-panel><i data-lucide="x"></i></button>
+        </div>
+
+        <form class="side-panel-body" id="create-job-form" novalidate>
+            <!-- Basics -->
+            <div class="panel-section">
+                <div class="panel-section-header">
+                    <span class="panel-section-title"><i data-lucide="briefcase"></i> Basics</span>
+                </div>
+                <div class="form-field">
+                    <label for="job-title">Job Title <span class="required">*</span></label>
+                    <input type="text" id="job-title" class="form-input" placeholder="e.g. Senior Product Designer" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="job-dept">Department</label>
+                        <select id="job-dept" class="form-input form-select">
+                            <option>Design</option>
+                            <option>Engineering</option>
+                            <option>Product</option>
+                            <option>Marketing</option>
+                            <option>Sales</option>
+                            <option>Operations</option>
+                            <option>Data</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="job-level">Level</label>
+                        <select id="job-level" class="form-input form-select">
+                            <option>Entry</option>
+                            <option>Mid</option>
+                            <option selected>Senior</option>
+                            <option>Lead</option>
+                            <option>Principal</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label>Employment Type</label>
+                    <div class="job-type-pills" role="radiogroup" aria-label="Employment type">
+                        <button type="button" class="job-type-pill active" data-type="full-time"><i data-lucide="user-check"></i> Full-time</button>
+                        <button type="button" class="job-type-pill" data-type="part-time"><i data-lucide="clock"></i> Part-time</button>
+                        <button type="button" class="job-type-pill" data-type="contract"><i data-lucide="file-text"></i> Contract</button>
+                        <button type="button" class="job-type-pill" data-type="internship"><i data-lucide="graduation-cap"></i> Internship</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div class="panel-section">
+                <div class="panel-section-header">
+                    <span class="panel-section-title"><i data-lucide="map-pin"></i> Location</span>
+                </div>
+                <div class="form-field">
+                    <label for="job-location">Location</label>
+                    <input type="text" id="job-location" class="form-input" placeholder="e.g. San Francisco, CA">
+                </div>
+                <div class="form-field">
+                    <label>Work Mode</label>
+                    <div class="job-type-pills" role="radiogroup" aria-label="Work mode">
+                        <button type="button" class="job-type-pill active" data-mode="onsite"><i data-lucide="building"></i> Onsite</button>
+                        <button type="button" class="job-type-pill" data-mode="hybrid"><i data-lucide="laptop"></i> Hybrid</button>
+                        <button type="button" class="job-type-pill" data-mode="remote"><i data-lucide="globe"></i> Remote</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compensation -->
+            <div class="panel-section">
+                <div class="panel-section-header">
+                    <span class="panel-section-title"><i data-lucide="dollar-sign"></i> Compensation</span>
+                </div>
+                <div class="form-row salary-row">
+                    <div class="form-field">
+                        <label for="job-currency">Currency</label>
+                        <select id="job-currency" class="form-input form-select">
+                            <option selected>INR</option>
+                            <option>USD</option>
+                            <option>EUR</option>
+                            <option>GBP</option>
+                            <option>CAD</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label for="job-min">Min</label>
+                        <input type="number" id="job-min" class="form-input" placeholder="80,000" min="0">
+                    </div>
+                    <div class="form-field">
+                        <label for="job-max">Max</label>
+                        <input type="number" id="job-max" class="form-input" placeholder="120,000" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="panel-section">
+                <div class="panel-section-header">
+                    <span class="panel-section-title"><i data-lucide="sparkles"></i> Required Skills</span>
+                </div>
+                <div class="skills-input-wrap">
+                    <div class="skill-chips" id="job-skill-chips"></div>
+                    <input type="text" id="job-skill-input" class="form-input" placeholder="Type a skill and press Enter">
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="panel-section">
+                <div class="panel-section-header">
+                    <span class="panel-section-title"><i data-lucide="align-left"></i> Description</span>
+                </div>
+                <div class="form-field">
+                    <label for="job-overview">Overview</label>
+                    <textarea id="job-overview" class="form-input form-textarea" rows="3" placeholder="What's the role, who's the team, what will they do…"></textarea>
+                </div>
+                <div class="form-field">
+                    <label for="job-resp">Key Responsibilities</label>
+                    <textarea id="job-resp" class="form-input form-textarea" rows="3" placeholder="One responsibility per line"></textarea>
+                </div>
+                <div class="form-field">
+                    <label for="job-req">Requirements</label>
+                    <textarea id="job-req" class="form-input form-textarea" rows="3" placeholder="Minimum experience, must-have skills, education…"></textarea>
+                </div>
+            </div>
+
+            <!-- Visibility -->
+            <div class="panel-section">
+                <div class="panel-section-header">
+                    <span class="panel-section-title"><i data-lucide="eye"></i> Visibility</span>
+                </div>
+                <div class="form-field">
+                    <label>Status</label>
+                    <div class="job-type-pills" role="radiogroup" aria-label="Status">
+                        <button type="button" class="job-type-pill active" data-status="active"><i data-lucide="check-circle-2"></i> Active</button>
+                        <button type="button" class="job-type-pill" data-status="draft"><i data-lucide="pencil"></i> Draft</button>
+                    </div>
+                </div>
+                <div class="visibility-toggles">
+                    <div class="settings-row">
+                        <div class="settings-row-info">
+                            <h4>Post to LinkedIn</h4>
+                            <p>Auto-publish to your company LinkedIn page.</p>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="settings-row">
+                        <div class="settings-row-info">
+                            <h4>Post to Indeed</h4>
+                            <p>Cross-post to Indeed sponsored listings.</p>
+                        </div>
+                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                    </div>
+                    <div class="settings-row">
+                        <div class="settings-row-info">
+                            <h4>Show salary range</h4>
+                            <p>Make the compensation band visible on the public listing.</p>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div class="side-panel-footer">
+            <button type="button" class="btn-cancel-interview" data-close-panel>
+                <i data-lucide="x-circle"></i> Cancel
+            </button>
+            <button type="submit" form="create-job-form" class="btn-save-candidate">
+                <i data-lucide="check-circle-2"></i> Publish Job
             </button>
         </div>
     </div>

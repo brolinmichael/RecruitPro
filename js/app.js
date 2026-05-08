@@ -1,4 +1,85 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Theme & Accent persistence (apply BEFORE first paint completes) ---
+    const ACCENT_LABELS = { cyan: 'Cyan', purple: 'Purple', green: 'Green', blue: 'Blue', orange: 'Orange' };
+    const savedTheme  = localStorage.getItem('rh-theme')  || 'dark';
+    const savedAccent = localStorage.getItem('rh-accent') || 'cyan';
+    document.body.setAttribute('data-theme', savedTheme);
+    document.body.setAttribute('data-accent', savedAccent);
+
+    const setTheme = (theme) => {
+        document.body.setAttribute('data-theme', theme);
+        localStorage.setItem('rh-theme', theme);
+        document.querySelectorAll('.theme-option').forEach(b => {
+            const isActive = b.dataset.theme === theme;
+            b.classList.toggle('active', isActive);
+            b.setAttribute('aria-checked', isActive ? 'true' : 'false');
+        });
+    };
+
+    const setAccent = (accent) => {
+        document.body.setAttribute('data-accent', accent);
+        localStorage.setItem('rh-accent', accent);
+        document.querySelectorAll('.accent-swatch').forEach(b => {
+            b.classList.toggle('active', b.dataset.accent === accent);
+        });
+        const label = document.getElementById('accent-label');
+        if (label) label.textContent = ACCENT_LABELS[accent] || accent;
+    };
+
+    // Wire up controls
+    document.querySelectorAll('.theme-option').forEach(btn => {
+        btn.addEventListener('click', () => setTheme(btn.dataset.theme));
+    });
+    document.querySelectorAll('.accent-swatch').forEach(btn => {
+        btn.addEventListener('click', () => setAccent(btn.dataset.accent));
+    });
+
+    // Reflect saved state in the UI on load
+    setTheme(savedTheme);
+    setAccent(savedAccent);
+
+    // --- Mobile sidebar drawer ---
+    const sidebarEl = document.querySelector('.sidebar');
+    const menuToggle = document.getElementById('menu-toggle');
+
+    const closeSidebar = () => {
+        if (!sidebarEl) return;
+        sidebarEl.classList.remove('is-open');
+        document.body.classList.remove('sidebar-open');
+    };
+    const openSidebar = () => {
+        if (!sidebarEl) return;
+        sidebarEl.classList.add('is-open');
+        document.body.classList.add('sidebar-open');
+    };
+    if (menuToggle && sidebarEl) {
+        menuToggle.addEventListener('click', () => {
+            sidebarEl.classList.contains('is-open') ? closeSidebar() : openSidebar();
+        });
+
+        // Click on the dimmed overlay (body::before) closes the drawer.
+        // The pseudo-element doesn't receive events directly, so we listen
+        // on the body and check that the click landed outside the sidebar.
+        document.body.addEventListener('click', (e) => {
+            if (!document.body.classList.contains('sidebar-open')) return;
+            if (sidebarEl.contains(e.target)) return;
+            if (menuToggle.contains(e.target)) return;
+            closeSidebar();
+        });
+
+        // Tapping a nav item also closes the drawer (matches mobile expectations)
+        sidebarEl.querySelectorAll('.nav-item[data-target]').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.matchMedia('(max-width: 768px)').matches) closeSidebar();
+            });
+        });
+
+        // If the viewport widens past mobile, drop the open state
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) closeSidebar();
+        });
+    }
+
     // --- Login Logic ---
     const loginForm = document.getElementById('login-form');
     const emailInput = document.getElementById('email');
@@ -180,6 +261,278 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- Pipeline: Drag & Drop ---
+    const kanbanBoard = document.querySelector('#pipeline-screen .kanban-board');
+    let draggingCard = null;
+    let dragOriginColumn = null;
+
+    const getDragAfterElement = (column, y) => {
+        const cards = [...column.querySelectorAll('.candidate-card:not(.is-dragging)')];
+        return cards.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset, element: child };
+            }
+            return closest;
+        }, { offset: -Infinity, element: null }).element;
+    };
+
+    const updateColumnCount = (col, animate) => {
+        const countEl = col.querySelector('.col-count');
+        if (!countEl) return;
+        const count = col.querySelectorAll('.candidate-card').length;
+        if (countEl.textContent !== String(count)) {
+            countEl.textContent = count;
+            if (animate) {
+                countEl.classList.remove('is-changed');
+                void countEl.offsetWidth;
+                countEl.classList.add('is-changed');
+                setTimeout(() => countEl.classList.remove('is-changed'), 600);
+            }
+        }
+    };
+
+    const initDraggableCard = (card) => {
+        if (card.dataset.dragInit === '1') return;
+        card.dataset.dragInit = '1';
+        card.setAttribute('draggable', 'true');
+
+        card.addEventListener('dragstart', (e) => {
+            draggingCard = card;
+            dragOriginColumn = card.closest('.kanban-column');
+            card.classList.add('is-dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            try { e.dataTransfer.setData('text/plain', 'card'); } catch (_) {}
+        });
+
+        card.addEventListener('dragend', () => {
+            // Defensive sweep — any card left in a transient state from a
+            // previous interrupted drag gets cleaned up here.
+            if (kanbanBoard) {
+                kanbanBoard.querySelectorAll('.candidate-card.is-dragging')
+                    .forEach(c => c.classList.remove('is-dragging'));
+                kanbanBoard.querySelectorAll('.candidate-card.is-landing')
+                    .forEach(c => c.classList.remove('is-landing'));
+            }
+            card.classList.remove('is-dragging');
+            const landed = draggingCard;
+            const finalCol = landed && landed.closest('.kanban-column');
+            const moved = finalCol && dragOriginColumn && finalCol !== dragOriginColumn;
+
+            if (landed && moved) {
+                landed.classList.add('is-landing');
+                setTimeout(() => landed.classList.remove('is-landing'), 600);
+            }
+
+            // Refresh counts on every column (animate the two affected ones)
+            if (kanbanBoard) {
+                kanbanBoard.querySelectorAll('.kanban-column').forEach(col => {
+                    const isAffected = moved && (col === dragOriginColumn || col === finalCol);
+                    updateColumnCount(col, isAffected);
+                });
+                kanbanBoard.querySelectorAll('.kanban-column.is-drop-target')
+                    .forEach(c => c.classList.remove('is-drop-target'));
+            }
+            draggingCard = null;
+            dragOriginColumn = null;
+        });
+    };
+
+    if (kanbanBoard) {
+        kanbanBoard.querySelectorAll('.candidate-card').forEach(initDraggableCard);
+
+        kanbanBoard.querySelectorAll('.kanban-column').forEach(col => {
+            col.addEventListener('dragenter', () => {
+                if (draggingCard) col.classList.add('is-drop-target');
+            });
+
+            col.addEventListener('dragover', (e) => {
+                if (!draggingCard) return;
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                col.classList.add('is-drop-target');
+
+                const after = getDragAfterElement(col, e.clientY);
+                if (after == null) {
+                    if (col.lastElementChild !== draggingCard) col.appendChild(draggingCard);
+                } else if (after !== draggingCard.nextElementSibling) {
+                    col.insertBefore(draggingCard, after);
+                }
+            });
+
+            col.addEventListener('dragleave', (e) => {
+                if (e.relatedTarget && col.contains(e.relatedTarget)) return;
+                col.classList.remove('is-drop-target');
+            });
+
+            col.addEventListener('drop', (e) => {
+                e.preventDefault();
+                col.classList.remove('is-drop-target');
+            });
+        });
+    }
+
+    // Expose so the Add Candidate flow can wire up newly inserted cards
+    window.__initDraggableCard = initDraggableCard;
+    window.__updateColumnCount = updateColumnCount;
+
+    // --- Create Job Panel ---
+    const createJobPanel = document.getElementById('create-job-panel');
+    const openCreateJobBtn = document.getElementById('open-create-job');
+    if (createJobPanel && openCreateJobBtn) {
+        openCreateJobBtn.addEventListener('click', () => openSidePanel(createJobPanel));
+
+        // Single-select pill groups (employment type / mode / status)
+        createJobPanel.querySelectorAll('.job-type-pills').forEach(group => {
+            const pills = group.querySelectorAll('.job-type-pill');
+            pills.forEach(pill => {
+                pill.addEventListener('click', () => {
+                    pills.forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+                });
+            });
+        });
+
+        // Skills chip input (mirrors Add Candidate pattern)
+        const jobSkillInput = document.getElementById('job-skill-input');
+        const jobSkillChips = document.getElementById('job-skill-chips');
+        const addJobSkillChip = (raw) => {
+            const text = raw.trim().replace(/,/g, '');
+            if (!text) return;
+            const key = text.toLowerCase();
+            if ([...jobSkillChips.children].some(c => c.dataset.skill === key)) return;
+            const chip = document.createElement('span');
+            chip.className = 'skill-chip';
+            chip.dataset.skill = key;
+            const label = document.createTextNode(text);
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.setAttribute('aria-label', `Remove ${text}`);
+            btn.textContent = '×';
+            btn.addEventListener('click', () => chip.remove());
+            chip.appendChild(label);
+            chip.appendChild(btn);
+            jobSkillChips.appendChild(chip);
+        };
+        if (jobSkillInput) {
+            jobSkillInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    addJobSkillChip(jobSkillInput.value);
+                    jobSkillInput.value = '';
+                } else if (e.key === 'Backspace' && !jobSkillInput.value) {
+                    const last = jobSkillChips.lastElementChild;
+                    if (last) last.remove();
+                }
+            });
+            jobSkillInput.addEventListener('blur', () => {
+                if (jobSkillInput.value.trim()) {
+                    addJobSkillChip(jobSkillInput.value);
+                    jobSkillInput.value = '';
+                }
+            });
+        }
+
+        // Submit — build a job row + inject into Active Jobs table
+        const createJobForm = document.getElementById('create-job-form');
+        const jobsTable = document.querySelector('#jobs-screen .active-jobs-section');
+
+        const escapeHtml = (s) => {
+            const div = document.createElement('div');
+            div.textContent = s == null ? '' : String(s);
+            return div.innerHTML;
+        };
+
+        // Department → icon + tinted color
+        const deptStyles = {
+            'Design':       { icon: 'user',           bg: 'rgba(0,240,255,0.12)',  color: 'var(--neon-cyan)' },
+            'Engineering':  { icon: 'layers',         bg: 'rgba(58,134,255,0.12)', color: 'var(--neon-blue)' },
+            'Product':      { icon: 'box',            bg: 'rgba(0,240,255,0.12)',  color: 'var(--neon-cyan)' },
+            'Marketing':    { icon: 'megaphone',      bg: 'rgba(181,55,242,0.14)', color: 'var(--neon-purple)' },
+            'Sales':        { icon: 'trending-up',    bg: 'rgba(0,255,136,0.12)',  color: 'var(--neon-green)' },
+            'Operations':   { icon: 'settings',       bg: 'rgba(58,134,255,0.12)', color: 'var(--neon-blue)' },
+            'Data':         { icon: 'flask-conical',  bg: 'rgba(0,255,136,0.12)',  color: 'var(--neon-green)' }
+        };
+
+        const buildJobRow = (data) => {
+            const row = document.createElement('div');
+            row.className = 'job-row is-new';
+            const style = deptStyles[data.department] || deptStyles['Design'];
+            row.innerHTML = `
+                <div class="job-title-col">
+                    <div class="job-icon" style="background: ${style.bg}; color: ${style.color};"><i data-lucide="${style.icon}"></i></div>
+                    <div>
+                        <h4>${escapeHtml(data.title)}</h4>
+                        <p>${escapeHtml(data.department)}</p>
+                    </div>
+                </div>
+                <div class="dept-col">${escapeHtml(data.department)}</div>
+                <div class="applicants-col">
+                    <span class="apps-count">0 Apps</span>
+                </div>
+                <div><span class="stage-badge stage-reviewing">Reviewing</span></div>
+                <div><div class="progress-col"><div class="progress-fill fill-green" style="width: 8%;"></div></div></div>
+                <div><button class="btn-manage">Manage</button></div>
+            `;
+            row.addEventListener('animationend', () => row.classList.remove('is-new'), { once: true });
+            return row;
+        };
+
+        const resetJobForm = () => {
+            createJobForm.reset();
+            jobSkillChips.innerHTML = '';
+            // Restore default-active pills
+            createJobPanel.querySelectorAll('.job-type-pills').forEach(group => {
+                const pills = group.querySelectorAll('.job-type-pill');
+                pills.forEach(p => p.classList.remove('active'));
+                if (pills[0]) pills[0].classList.add('active');
+            });
+        };
+
+        createJobForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const titleEl = document.getElementById('job-title');
+            const title = titleEl.value.trim();
+            if (!title) { titleEl.focus(); return; }
+
+            const data = {
+                title,
+                department: document.getElementById('job-dept').value,
+                level: document.getElementById('job-level').value,
+                location: document.getElementById('job-location').value.trim(),
+                currency: document.getElementById('job-currency').value,
+                salaryMin: document.getElementById('job-min').value,
+                salaryMax: document.getElementById('job-max').value
+            };
+
+            if (jobsTable) {
+                const row = buildJobRow(data);
+                // Insert at top, after the table header
+                const header = jobsTable.querySelector('.jobs-table-header');
+                if (header && header.nextSibling) {
+                    jobsTable.insertBefore(row, header.nextSibling);
+                } else {
+                    jobsTable.appendChild(row);
+                }
+                if (window.lucide) lucide.createIcons();
+                row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            closeAllSidePanels();
+            setTimeout(resetJobForm, 400);
+        });
+    }
+
+    // --- Candidate Details Tabs (visual toggle) ---
+    const cdTabs = document.querySelectorAll('#candidate-details-screen .cd-tab-btn');
+    cdTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            cdTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+        });
+    });
+
     // --- Side Panel Logic (shared overlay) ---
     const interviewItems = document.querySelectorAll('.dash-interview-item.clickable');
     const interviewPanel = document.getElementById('interview-detail-panel');
@@ -204,6 +557,20 @@ document.addEventListener('DOMContentLoaded', () => {
         item.addEventListener('click', () => openSidePanel(interviewPanel));
     });
 
+    // Calendar events + sidebar interview cards open the same panel
+    document.querySelectorAll('#calendar-screen .cal-event.clickable').forEach(ev => {
+        ev.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openSidePanel(interviewPanel);
+        });
+    });
+    document.querySelectorAll('#calendar-screen .interview-actions button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openSidePanel(interviewPanel);
+        });
+    });
+
     closePanelBtn.addEventListener('click', closeAllSidePanels);
     overlay.addEventListener('click', closeAllSidePanels);
 
@@ -215,8 +582,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Add Candidate Panel ---
     const addCandPanel = document.getElementById('add-candidate-panel');
     const openAddCandBtn = document.getElementById('open-add-candidate');
+    const openAddCandBtnList = document.getElementById('open-add-candidate-from-list');
     if (addCandPanel && openAddCandBtn) {
         openAddCandBtn.addEventListener('click', () => openSidePanel(addCandPanel));
+        if (openAddCandBtnList) {
+            openAddCandBtnList.addEventListener('click', () => openSidePanel(addCandPanel));
+        }
 
         // Stage pill single-select
         const stagePills = addCandPanel.querySelectorAll('.stage-pill');
@@ -426,6 +797,9 @@ document.addEventListener('DOMContentLoaded', () => {
             else col.appendChild(card);
 
             updateColCount(col);
+            if (typeof window.__initDraggableCard === 'function') {
+                window.__initDraggableCard(card);
+            }
             if (window.lucide) lucide.createIcons();
 
             // Bring the chosen column into view (kanban scrolls horizontally)
