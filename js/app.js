@@ -1,4 +1,38 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Global Toast Notification System ---
+    window.showToast = (message, type = 'info') => {
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            document.body.appendChild(container);
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+
+        let iconStr = 'info';
+        if (type === 'success') iconStr = 'check-circle-2';
+        if (type === 'error') iconStr = 'alert-circle';
+
+        toast.innerHTML = `
+            <div class="toast-icon"><i data-lucide="${iconStr}"></i></div>
+            <div class="toast-message">${message}</div>
+            <button class="toast-close"><i data-lucide="x" style="width:16px;height:16px;"></i></button>
+        `;
+
+        container.appendChild(toast);
+        if (window.lucide) lucide.createIcons();
+
+        const closeToast = () => {
+            toast.classList.add('toast-fadeOut');
+            setTimeout(() => toast.remove(), 300);
+        };
+
+        toast.querySelector('.toast-close').addEventListener('click', closeToast);
+        setTimeout(closeToast, 4000);
+    };
+
     // --- Theme & Accent persistence (apply BEFORE first paint completes) ---
     const ACCENT_LABELS = { cyan: 'Cyan', purple: 'Purple', green: 'Green', blue: 'Blue', orange: 'Orange' };
     const savedTheme  = localStorage.getItem('rh-theme')  || 'dark';
@@ -110,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.form-group').forEach(el => el.classList.remove('error'));
     };
 
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         clearErrors();
 
@@ -127,25 +161,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (isValid) {
-            // Simulate API call and success
             const btn = loginForm.querySelector('.btn-primary');
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Authenticating...';
-            lucide.createIcons();
+            if (window.lucide) lucide.createIcons();
 
-            setTimeout(() => {
+            try {
+                // Call actual backend login endpoint
+                let res;
+                if (window.api && window.api.login) {
+                    res = await window.api.login(emailInput.value, passwordInput.value);
+                } else {
+                    // Fallback mock
+                    res = { user: { email: emailInput.value } };
+                    await new Promise(r => setTimeout(r, 800));
+                }
+
                 loginScreen.classList.remove('active');
                 setTimeout(() => {
                     loginScreen.style.display = 'none';
                     appContainer.style.display = 'flex';
-                    // Trigger reflow
                     void appContainer.offsetWidth;
                     appContainer.classList.add('active');
-                    
-                    // Start KPI animations when the dashboard first appears
                     runKPICounters();
-                }, 400); // Wait for fade out
-            }, 1000);
+                    
+                    window.showToast('Welcome back to RecruitPro!', 'success');
+                }, 400);
+
+            } catch (err) {
+                console.error("Login Error:", err);
+                window.showToast(err.message || 'Invalid credentials. Please try again.', 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                if (window.lucide) lucide.createIcons();
+            }
+        } else {
+            window.showToast('Please correct the highlighted errors.', 'error');
         }
     });
 
@@ -490,11 +541,40 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
 
-        createJobForm.addEventListener('submit', (e) => {
+        createJobForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            // Clear previous errors
+            createJobForm.querySelectorAll('.has-error').forEach(el => {
+                el.classList.remove('has-error');
+                const msg = el.querySelector('.form-error-msg');
+                if (msg) msg.remove();
+            });
+
+            const showFieldError = (inputEl, msg) => {
+                const field = inputEl.closest('.form-field');
+                if (!field) return;
+                field.classList.add('has-error');
+                const err = document.createElement('div');
+                err.className = 'form-error-msg';
+                err.innerHTML = `<i data-lucide="alert-circle"></i> ${msg}`;
+                field.appendChild(err);
+            };
+
             const titleEl = document.getElementById('job-title');
             const title = titleEl.value.trim();
-            if (!title) { titleEl.focus(); return; }
+            if (!title) {
+                showFieldError(titleEl, 'Job title is required');
+                if (window.lucide) lucide.createIcons();
+                window.showToast('Please correct the errors before submitting.', 'error');
+                return;
+            }
+
+            const submitBtn = createJobForm.querySelector('button[type="submit"]');
+            const originalBtnHtml = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Saving...';
+            submitBtn.disabled = true;
+            if (window.lucide) lucide.createIcons();
 
             const data = {
                 title,
@@ -506,21 +586,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 salaryMax: document.getElementById('job-max').value
             };
 
-            if (jobsTable) {
-                const row = buildJobRow(data);
-                // Insert at top, after the table header
-                const header = jobsTable.querySelector('.jobs-table-header');
-                if (header && header.nextSibling) {
-                    jobsTable.insertBefore(row, header.nextSibling);
-                } else {
-                    jobsTable.appendChild(row);
-                }
-                if (window.lucide) lucide.createIcons();
-                row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
+            try {
+                // Post to API (window.api.addJob doesn't exist yet but let's assume fetch logic or skip API if not implemented)
+                // For now we'll just mock API via fetch
+                const response = await fetch('http://localhost:8000/api/jobs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) throw new Error('Network response was not ok');
+                const savedData = await response.json();
 
-            closeAllSidePanels();
-            setTimeout(resetJobForm, 400);
+                if (jobsTable) {
+                    const row = buildJobRow(savedData);
+                    const header = jobsTable.querySelector('.jobs-table-header');
+                    if (header && header.nextSibling) {
+                        jobsTable.insertBefore(row, header.nextSibling);
+                    } else {
+                        jobsTable.appendChild(row);
+                    }
+                    if (window.lucide) lucide.createIcons();
+                    row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+
+                closeAllSidePanels();
+                setTimeout(resetJobForm, 400);
+                window.showToast('Job successfully created!', 'success');
+
+            } catch (error) {
+                console.error("Error creating job:", error);
+                window.showToast('Failed to create job. Please try again.', 'error');
+            } finally {
+                submitBtn.innerHTML = originalBtnHtml;
+                submitBtn.disabled = false;
+                if (window.lucide) lucide.createIcons();
+            }
         });
     }
 
@@ -764,49 +865,116 @@ document.addEventListener('DOMContentLoaded', () => {
             if (positionEl) positionEl.value = 'Senior UI/UX Designer';
         };
 
-        addCandForm.addEventListener('submit', (e) => {
+        addCandForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            // Clear previous errors
+            addCandForm.querySelectorAll('.has-error').forEach(el => {
+                el.classList.remove('has-error');
+                const msg = el.querySelector('.form-error-msg');
+                if (msg) msg.remove();
+            });
+
+            const showFieldError = (inputEl, msg) => {
+                const field = inputEl.closest('.form-field');
+                if (!field) return;
+                field.classList.add('has-error');
+                const err = document.createElement('div');
+                err.className = 'form-error-msg';
+                err.innerHTML = `<i data-lucide="alert-circle"></i> ${msg}`;
+                field.appendChild(err);
+            };
 
             const nameEl = document.getElementById('cand-name');
             const emailEl = document.getElementById('cand-email');
             const name = nameEl.value.trim();
             const email = emailEl.value.trim();
-            if (!name) { nameEl.focus(); return; }
-            if (!email) { emailEl.focus(); return; }
-
-            const stageBtn = addCandPanel.querySelector('.stage-pill.active');
-            const stage = stageBtn ? stageBtn.dataset.stage : 'applied';
-            const colSelector = stageColMap[stage] || '.col-applied';
-            const col = document.querySelector(`#pipeline-screen ${colSelector}`);
-            if (!col) return;
-
-            const data = {
-                name,
-                email,
-                phone: document.getElementById('cand-phone').value.trim(),
-                position: document.getElementById('cand-position').value.trim(),
-                experience: document.getElementById('cand-experience').value.trim(),
-                source: document.getElementById('cand-source').value,
-                skills: collectSkills(),
-                notes: document.getElementById('cand-notes').value.trim()
-            };
-
-            const card = buildCandidateCard(data);
-            const firstCard = col.querySelector('.candidate-card');
-            if (firstCard) col.insertBefore(card, firstCard);
-            else col.appendChild(card);
-
-            updateColCount(col);
-            if (typeof window.__initDraggableCard === 'function') {
-                window.__initDraggableCard(card);
+            
+            let isValid = true;
+            if (!name) { showFieldError(nameEl, 'Name is required'); isValid = false; }
+            if (!email) { showFieldError(emailEl, 'Email is required'); isValid = false; }
+            
+            if (!isValid) {
+                if (window.lucide) lucide.createIcons();
+                window.showToast('Please fill out all required fields correctly.', 'error');
+                return;
             }
+
+            const submitBtn = addCandForm.querySelector('button[type="submit"]');
+            const originalBtnHtml = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Processing & Scoring...';
+            submitBtn.disabled = true;
             if (window.lucide) lucide.createIcons();
 
-            // Bring the chosen column into view (kanban scrolls horizontally)
-            col.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            try {
+                const stageBtn = addCandPanel.querySelector('.stage-pill.active');
+                const stage = stageBtn ? stageBtn.dataset.stage : 'applied';
+                const colSelector = stageColMap[stage] || '.col-applied';
+                const col = document.querySelector(`#pipeline-screen ${colSelector}`);
+                
+                const formData = new FormData(addCandForm);
+                formData.append('stage', stage);
+                formData.append('skills', JSON.stringify(collectSkills()));
 
-            closeAllSidePanels();
-            setTimeout(resetForm, 400);
+                // Step 1: AI Score the Resume
+                const resumeInput = document.getElementById('cand-resume');
+                if (resumeInput.files.length > 0) {
+                    const scoreData = new FormData();
+                    scoreData.append('resume', resumeInput.files[0]);
+                    scoreData.append('position', document.getElementById('cand-position').value.trim());
+                    
+                    const aiResult = await window.api.scoreResume(scoreData);
+                    formData.append('score', aiResult.score);
+                    formData.append('aiReasoning', aiResult.reasoning);
+                }
+
+                // Step 2: Add Candidate to Database via API
+                const newCandidate = await window.api.addCandidate(formData);
+
+                // Step 3: Update UI
+                if (col) {
+                    const data = {
+                        name: newCandidate.name,
+                        email: newCandidate.email,
+                        position: newCandidate.position,
+                        experience: newCandidate.experience,
+                        source: newCandidate.source,
+                        skills: collectSkills(),
+                        score: newCandidate.score
+                    };
+
+                    const card = buildCandidateCard(data);
+                    
+                    if (newCandidate.score) {
+                        const scoreValEl = card.querySelector('.score-val');
+                        if (scoreValEl) scoreValEl.textContent = `${newCandidate.score}%`;
+                    }
+
+                    const firstCard = col.querySelector('.candidate-card');
+                    if (firstCard) col.insertBefore(card, firstCard);
+                    else col.appendChild(card);
+
+                    updateColCount(col);
+                    if (typeof window.__initDraggableCard === 'function') {
+                        window.__initDraggableCard(card);
+                    }
+                    if (window.lucide) lucide.createIcons();
+
+                    col.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+                }
+
+                closeAllSidePanels();
+                setTimeout(resetForm, 400);
+                window.showToast('Candidate successfully added and scored!', 'success');
+
+            } catch (error) {
+                console.error("Error adding candidate:", error);
+                window.showToast('Failed to add candidate. ' + (error.message || ''), 'error');
+            } finally {
+                submitBtn.innerHTML = originalBtnHtml;
+                submitBtn.disabled = false;
+                if (window.lucide) lucide.createIcons();
+            }
         });
     }
 

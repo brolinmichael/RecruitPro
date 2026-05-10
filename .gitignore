@@ -7,3 +7,6 @@ Thumbs.db
 *.swp
 .vscode/
 .idea/
+
+node_modules/
+.env

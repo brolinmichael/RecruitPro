@@ -1394,3 +1394,127 @@ body[data-theme="light"] .side-panel h4 {
 body[data-theme="light"] .side-panel p {
     color: #4d5666;
 }
+
+/* =========================================================
+   Toast Notifications
+   ========================================================= */
+#toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(13, 17, 23, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    color: var(--text-primary);
+    padding: 14px 20px;
+    border-radius: 12px;
+    min-width: 280px;
+    max-width: 400px;
+    pointer-events: auto;
+    animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast.toast-fadeOut {
+    opacity: 0;
+    transform: translateX(20px);
+}
+
+.toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.toast-success .toast-icon i { color: var(--neon-green); }
+.toast-error .toast-icon i { color: #ff4b4b; }
+.toast-info .toast-icon i { color: var(--neon-cyan); }
+
+.toast-message {
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.4;
+    flex-grow: 1;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+.toast-close:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes toastSlideIn {
+    from { transform: translateX(40px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+body[data-theme="light"] .toast {
+    background: rgba(255, 255, 255, 0.92);
+    border-color: rgba(13, 17, 23, 0.08);
+    box-shadow: 0 8px 24px rgba(20, 60, 80, 0.12);
+    color: #0a0c10;
+}
+body[data-theme="light"] .toast-close { color: #4d5666; }
+body[data-theme="light"] .toast-close:hover { color: #0a0c10; background: rgba(13, 17, 23, 0.06); }
+
+/* =========================================================
+   Inline Form Validation
+   ========================================================= */
+.form-field.has-error .form-input,
+.form-field.has-error .form-select,
+.form-field.has-error .form-textarea {
+    border-color: #ff4b4b;
+    background: rgba(255, 75, 75, 0.05);
+}
+
+.form-field.has-error .form-input:focus,
+.form-field.has-error .form-select:focus,
+.form-field.has-error .form-textarea:focus {
+    box-shadow: 0 0 0 3px rgba(255, 75, 75, 0.15);
+}
+
+.form-error-msg {
+    color: #ff4b4b;
+    font-size: 0.75rem;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    animation: fadeIn 0.2s ease forwards;
+}
+
+.form-error-msg i {
+    width: 12px;
+    height: 12px;
+}
+
+body[data-theme="light"] .form-field.has-error .form-input {
+    background: rgba(255, 75, 75, 0.03);
+}
