@@ -1,0 +1,27 @@
+◇ injected env (1) from .env // tip: ⌘ custom filepath { path: '/custom/path/.env' }
+RecruitPro API and Server running on http://localhost:8000
+Automation Engine: ACTIVE (Threshold: 80)
+AI Interviewer: ENABLED
+AI Scoring Enabled
+[AI SCORE] Processing file: Resume.pdf (application/pdf)
+AI Evaluation Error: TypeError: pdfParse is not a function
+    at /Users/wacuser/RecruitPro/server.js:195:32
+    at Layer.handleRequest (/Users/wacuser/RecruitPro/node_modules/router/lib/layer.js:152:17)
+    at next (/Users/wacuser/RecruitPro/node_modules/router/lib/route.js:157:13)
+    at done (/Users/wacuser/RecruitPro/node_modules/multer/lib/make-middleware.js:69:7)
+    at indicateDone (/Users/wacuser/RecruitPro/node_modules/multer/lib/make-middleware.js:73:68)
+    at Multipart.<anonymous> (/Users/wacuser/RecruitPro/node_modules/multer/lib/make-middleware.js:243:7)
+    at Multipart.emit (node:events:509:20)
+    at emitCloseNT (node:internal/streams/destroy:148:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+[AI SCORE] Processing file: Resume.pdf (application/pdf)
+AI Evaluation Error: TypeError: pdfParse is not a function
+    at /Users/wacuser/RecruitPro/server.js:195:32
+    at Layer.handleRequest (/Users/wacuser/RecruitPro/node_modules/router/lib/layer.js:152:17)
+    at next (/Users/wacuser/RecruitPro/node_modules/router/lib/route.js:157:13)
+    at done (/Users/wacuser/RecruitPro/node_modules/multer/lib/make-middleware.js:69:7)
+    at indicateDone (/Users/wacuser/RecruitPro/node_modules/multer/lib/make-middleware.js:73:68)
+    at Multipart.<anonymous> (/Users/wacuser/RecruitPro/node_modules/multer/lib/make-middleware.js:243:7)
+    at Multipart.emit (node:events:509:20)
+    at emitCloseNT (node:internal/streams/destroy:148:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)

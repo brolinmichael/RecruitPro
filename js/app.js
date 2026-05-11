@@ -390,12 +390,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    if (kanbanBoard) {
+    const initPipelineDragDrop = () => {
+        if (!kanbanBoard) return;
+        
         kanbanBoard.querySelectorAll('.candidate-card').forEach(initDraggableCard);
 
         kanbanBoard.querySelectorAll('.kanban-column').forEach(col => {
-            col.addEventListener('dragenter', () => {
-                if (draggingCard) col.classList.add('is-drop-target');
+            col.addEventListener('dragenter', (e) => {
+                if (draggingCard) {
+                    e.preventDefault();
+                    col.classList.add('is-drop-target');
+                }
             });
 
             col.addEventListener('dragover', (e) => {
@@ -407,12 +412,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const after = getDragAfterElement(col, e.clientY);
                 if (after == null) {
                     if (col.lastElementChild !== draggingCard) col.appendChild(draggingCard);
-                } else if (after !== draggingCard.nextElementSibling) {
+                } else if (after !== draggingCard.nextElementSibling && after !== draggingCard) {
                     col.insertBefore(draggingCard, after);
                 }
             });
 
             col.addEventListener('dragleave', (e) => {
+                // Only remove if we're actually leaving the column, not just entering a card inside it
                 if (e.relatedTarget && col.contains(e.relatedTarget)) return;
                 col.classList.remove('is-drop-target');
             });
@@ -422,7 +428,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 col.classList.remove('is-drop-target');
             });
         });
-    }
+    };
+
+    // Initial call
+    initPipelineDragDrop();
 
     // Expose so the Add Candidate flow can wire up newly inserted cards
     window.__initDraggableCard = initDraggableCard;
@@ -887,23 +896,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const nameEl = document.getElementById('cand-name');
             const emailEl = document.getElementById('cand-email');
+            const resumeInput = document.getElementById('cand-resume');
             const name = nameEl.value.trim();
             const email = emailEl.value.trim();
             
             let isValid = true;
             if (!name) { showFieldError(nameEl, 'Name is required'); isValid = false; }
             if (!email) { showFieldError(emailEl, 'Email is required'); isValid = false; }
+            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFieldError(emailEl, 'Invalid email format'); isValid = false; }
             
+            if (resumeInput.files.length === 0) {
+                window.showToast('Please upload a resume for AI Evaluation', 'error');
+                isValid = false;
+            }
+
             if (!isValid) {
                 if (window.lucide) lucide.createIcons();
                 window.showToast('Please fill out all required fields correctly.', 'error');
                 return;
             }
 
-            const submitBtn = addCandForm.querySelector('button[type="submit"]');
-            const originalBtnHtml = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Processing & Scoring...';
-            submitBtn.disabled = true;
+            const submitBtn = document.querySelector('.btn-save-candidate');
+            const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) {
+                submitBtn.innerHTML = '<i data-lucide="loader-2" class="spin"></i> Processing & Scoring...';
+                submitBtn.disabled = true;
+            }
             if (window.lucide) lucide.createIcons();
 
             try {
@@ -913,12 +931,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 const col = document.querySelector(`#pipeline-screen ${colSelector}`);
                 
                 const formData = new FormData(addCandForm);
+                // Manually append fields in case FormData(form) doesn't catch them all (e.g. if name attributes are missing)
+                formData.set('name', name);
+                formData.set('email', email);
+                formData.set('phone', document.getElementById('cand-phone').value.trim());
+                formData.set('position', document.getElementById('cand-position').value.trim());
+                formData.set('experience', document.getElementById('cand-experience').value.trim());
+                formData.set('source', document.getElementById('cand-source').value.trim());
+                formData.set('notes', document.getElementById('cand-notes').value.trim());
                 formData.append('stage', stage);
                 formData.append('skills', JSON.stringify(collectSkills()));
 
                 // Step 1: AI Score the Resume
-                const resumeInput = document.getElementById('cand-resume');
                 if (resumeInput.files.length > 0) {
+                    window.showToast('AI is analyzing resume against Job Description...', 'success');
                     const scoreData = new FormData();
                     scoreData.append('resume', resumeInput.files[0]);
                     scoreData.append('position', document.getElementById('cand-position').value.trim());
@@ -932,24 +958,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const newCandidate = await window.api.addCandidate(formData);
 
                 // Step 3: Update UI
+                const data = {
+                    name: newCandidate.name,
+                    email: newCandidate.email,
+                    position: newCandidate.position,
+                    experience: newCandidate.experience,
+                    source: newCandidate.source,
+                    skills: collectSkills(),
+                    score: newCandidate.score
+                };
+
+                const card = buildCandidateCard(data);
+                
+                if (newCandidate.score) {
+                    const scoreValEl = card.querySelector('.score-val');
+                    if (scoreValEl) scoreValEl.textContent = `${newCandidate.score}%`;
+                }
+
                 if (col) {
-                    const data = {
-                        name: newCandidate.name,
-                        email: newCandidate.email,
-                        position: newCandidate.position,
-                        experience: newCandidate.experience,
-                        source: newCandidate.source,
-                        skills: collectSkills(),
-                        score: newCandidate.score
-                    };
-
-                    const card = buildCandidateCard(data);
-                    
-                    if (newCandidate.score) {
-                        const scoreValEl = card.querySelector('.score-val');
-                        if (scoreValEl) scoreValEl.textContent = `${newCandidate.score}%`;
-                    }
-
                     const firstCard = col.querySelector('.candidate-card');
                     if (firstCard) col.insertBefore(card, firstCard);
                     else col.appendChild(card);
@@ -958,10 +984,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (typeof window.__initDraggableCard === 'function') {
                         window.__initDraggableCard(card);
                     }
-                    if (window.lucide) lucide.createIcons();
-
                     col.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
                 }
+
+                // Update Candidates Grid as well
+                const candGrid = document.querySelector('.candidates-grid');
+                if (candGrid) {
+                    const gridCard = card.cloneNode(true);
+                    gridCard.onclick = () => navigateTo('candidate-details-screen');
+                    const firstGridCard = candGrid.querySelector('.candidate-card');
+                    if (firstGridCard) candGrid.insertBefore(gridCard, firstGridCard);
+                    else candGrid.appendChild(gridCard);
+                }
+
+                if (window.lucide) lucide.createIcons();
 
                 closeAllSidePanels();
                 setTimeout(resetForm, 400);
@@ -971,8 +1007,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Error adding candidate:", error);
                 window.showToast('Failed to add candidate. ' + (error.message || ''), 'error');
             } finally {
-                submitBtn.innerHTML = originalBtnHtml;
-                submitBtn.disabled = false;
+                if (submitBtn) {
+                    submitBtn.innerHTML = originalBtnHtml;
+                    submitBtn.disabled = false;
+                }
                 if (window.lucide) lucide.createIcons();
             }
         });
@@ -1053,27 +1091,50 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const runKPICounters = () => {
+    const runKPICounters = async () => {
+        // Fetch live data from API
+        try {
+            if (window.api && window.api.getKPIs) {
+                const kpis = await window.api.getKPIs();
+                
+                const mappings = {
+                    'Total Candidates': kpis.totalCandidates,
+                    'Active Jobs': kpis.activeJobs,
+                    'New Applications': kpis.totalCandidates, // Simulating for UI
+                    'Interviews Today': kpis.interviews
+                };
+
+                document.querySelectorAll('.kpi-card').forEach(card => {
+                    const title = card.querySelector('.kpi-title').textContent.trim();
+                    const valueEl = card.querySelector('.kpi-value');
+                    if (valueEl && mappings[title] !== undefined) {
+                        valueEl.textContent = mappings[title].toLocaleString();
+                        // Re-initialize for animation
+                        valueEl.dataset.initialized = ''; 
+                    }
+                });
+                initKPICounters();
+            }
+        } catch (err) {
+            console.warn("Failed to fetch live KPIs:", err);
+        }
+
         const kpiValues = document.querySelectorAll('.kpi-value');
         kpiValues.forEach(el => {
             const strips = el.querySelectorAll('.digit-strip');
             strips.forEach((strip, index) => {
-                // Reset first
                 strip.style.transition = 'none';
                 strip.style.transform = 'translateY(0)';
-                
-                // Trigger reflow
                 void strip.offsetWidth;
-                
-                // Animate
                 strip.style.transition = 'transform 2s cubic-bezier(0.15, 0.9, 0.3, 1)';
                 const targetDigit = parseInt(strip.dataset.digit);
                 setTimeout(() => {
                     strip.style.transform = `translateY(-${targetDigit * 10}%)`;
-                }, 100 + (index * 80)); // Slightly faster staggered delay
+                }, 100 + (index * 80));
             });
         });
     };
+
 
     // Run initialization
     initKPICounters();

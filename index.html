@@ -757,15 +757,35 @@
                     <div class="pipeline-main">
                         <div class="job-details-top">
                             <div class="job-details-top-row">
-                                <h2>Job Details</h2>
-                                <button type="button" class="btn-add-candidate" id="open-add-candidate">
-                                    <i data-lucide="user-plus"></i>
-                                    <span>Add Candidate</span>
-                                </button>
+                                <div class="job-details-header-info">
+                                    <span class="job-breadcrumb">Jobs / Senior UI/UX Designer</span>
+                                    <h2 id="job-details-title">Senior UI/UX Designer</h2>
+                                </div>
+                                <div class="job-details-actions">
+                                    <button type="button" class="btn-job-action secondary">
+                                        <i data-lucide="edit-3"></i> Edit Job
+                                    </button>
+                                    <button type="button" class="btn-add-candidate" id="open-add-candidate">
+                                        <i data-lucide="user-plus"></i>
+                                        <span>Add Candidate</span>
+                                    </button>
+                                </div>
                             </div>
                             <div class="pipeline-header">
-                                <h4>CANDIDATE PIPELINE</h4>
-                                <div style="font-size: 0.85rem; color: var(--text-secondary); cursor: pointer;"><i data-lucide="chevron-left" style="width:14px;vertical-align:middle;"></i> Scroll <i data-lucide="chevron-right" style="width:14px;vertical-align:middle;"></i></div>
+                                <div class="pipeline-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-val">32</span>
+                                        <span class="stat-label">Total Applicants</span>
+                                    </div>
+                                    <div class="stat-divider"></div>
+                                    <div class="stat-item">
+                                        <span class="stat-val">8</span>
+                                        <span class="stat-label">Screening</span>
+                                    </div>
+                                </div>
+                                <div class="pipeline-scroll-hint">
+                                    <i data-lucide="chevron-left"></i> Scroll <i data-lucide="chevron-right"></i>
+                                </div>
                             </div>
                         </div>
 
@@ -1935,16 +1955,16 @@
                 </div>
                 <div class="form-field">
                     <label for="cand-name">Full Name <span class="required">*</span></label>
-                    <input type="text" id="cand-name" class="form-input" placeholder="e.g. Sarah Jenkins" required>
+                    <input type="text" id="cand-name" name="name" class="form-input" placeholder="e.g. Sarah Jenkins" required>
                 </div>
                 <div class="form-row">
                     <div class="form-field">
                         <label for="cand-email">Email <span class="required">*</span></label>
-                        <input type="email" id="cand-email" class="form-input" placeholder="name@company.com" required>
+                        <input type="email" id="cand-email" name="email" class="form-input" placeholder="name@company.com" required>
                     </div>
                     <div class="form-field">
                         <label for="cand-phone">Phone</label>
-                        <input type="tel" id="cand-phone" class="form-input" placeholder="+1 (555) 000-0000">
+                        <input type="tel" id="cand-phone" name="phone" class="form-input" placeholder="+1 (555) 000-0000">
                     </div>
                 </div>
             </div>
@@ -1956,19 +1976,19 @@
                 </div>
                 <div class="form-field">
                     <label for="cand-position">Position</label>
-                    <input type="text" id="cand-position" class="form-input" value="Senior UI/UX Designer">
+                    <input type="text" id="cand-position" name="position" class="form-input" value="Senior UI/UX Designer">
                 </div>
                 <div class="form-row">
                     <div class="form-field">
                         <label for="cand-experience">Experience</label>
                         <div class="input-affix">
-                            <input type="number" id="cand-experience" class="form-input" placeholder="5" min="0" max="60">
+                            <input type="number" id="cand-experience" name="experience" class="form-input" placeholder="5" min="0" max="60">
                             <span class="affix">yrs</span>
                         </div>
                     </div>
                     <div class="form-field">
                         <label for="cand-source">Source</label>
-                        <select id="cand-source" class="form-input form-select">
+                        <select id="cand-source" name="source" class="form-input form-select">
                             <option>LinkedIn</option>
                             <option>Indeed</option>
                             <option>Referral</option>
@@ -2009,7 +2029,7 @@
                     <span class="panel-section-title">Resume</span>
                 </div>
                 <label class="upload-zone" id="cand-upload-zone">
-                    <input type="file" id="cand-resume" accept=".pdf,.doc,.docx" hidden>
+                    <input type="file" id="cand-resume" name="resume" accept=".pdf,.doc,.docx" hidden>
                     <div class="upload-icon"><i data-lucide="upload-cloud"></i></div>
                     <div class="upload-text">
                         <span class="upload-primary">Drop file here or click to upload</span>
@@ -2024,7 +2044,7 @@
                     <span class="panel-section-title">Notes</span>
                 </div>
                 <div class="form-field">
-                    <textarea id="cand-notes" class="form-input form-textarea" rows="3" placeholder="Any context that would help the hiring team…"></textarea>
+                    <textarea id="cand-notes" name="notes" class="form-input form-textarea" rows="3" placeholder="Any context that would help the hiring team…"></textarea>
                 </div>
             </div>
         </form>
