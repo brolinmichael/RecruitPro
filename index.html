@@ -389,12 +389,13 @@
                         <button type="button" class="btn-add-candidate" id="open-create-job"><i data-lucide="plus"></i> <span>Create New Job</span></button>
                     </div>
                     <div class="section-title">Recent Insights</div>
-                <div class="insights-grid">
+                <!-- Insights — populated from /api/jobs/insights -->
+                <div class="insights-grid" id="jobs-insights" aria-busy="true">
                     <div class="glass-panel insight-card">
                         <div class="insight-header"><h3>Total Job Openings</h3></div>
                         <div class="insight-value-row">
-                            <span class="insight-value">74</span>
-                            <span class="insight-trend text-green">+8% <span class="trend-label">this month</span></span>
+                            <span class="insight-value" data-insight="total-openings">—</span>
+                            <span class="insight-trend text-green" data-insight="openings-trend">— <span class="trend-label">this month</span></span>
                         </div>
                         <div class="insight-chart-container">
                             <svg width="100%" height="100%" viewBox="0 0 100 40" preserveAspectRatio="none">
@@ -406,8 +407,8 @@
                     <div class="glass-panel insight-card">
                         <div class="insight-header"><h3>Candidates Hired</h3></div>
                         <div class="insight-value-row">
-                            <span class="insight-value">19</span>
-                            <span class="insight-trend text-green">+12% <span class="trend-label">This Month</span></span>
+                            <span class="insight-value" data-insight="hired">—</span>
+                            <span class="insight-trend text-green" data-insight="hired-trend">— <span class="trend-label">This Month</span></span>
                         </div>
                         <div class="insight-chart-container bar-chart">
                             <div class="bar" style="height: 40%;"></div>
@@ -423,8 +424,8 @@
                     <div class="glass-panel insight-card">
                         <div class="insight-header"><h3>Applications Received</h3></div>
                         <div class="insight-value-row">
-                            <span class="insight-value">245</span>
-                            <span class="insight-trend text-secondary">-4% <span class="trend-label">This Week</span></span>
+                            <span class="insight-value" data-insight="applications">—</span>
+                            <span class="insight-trend text-secondary" data-insight="applications-trend">— <span class="trend-label">This Week</span></span>
                         </div>
                         <div class="insight-chart-container">
                             <svg width="100%" height="100%" viewBox="0 0 100 40" preserveAspectRatio="none">
@@ -436,26 +437,27 @@
                     <div class="glass-panel insight-card">
                         <div class="insight-header"><h3>Offer Acceptance Rate</h3></div>
                         <div class="insight-value-row">
-                            <span class="insight-value">88%</span>
+                            <span class="insight-value" data-insight="offer-rate">—</span>
                         </div>
                         <div class="insight-chart-container">
                             <div class="small-donut-container">
                                 <svg class="donut-svg" viewBox="0 0 100 100">
                                     <circle class="donut-ring donut-bg" cx="50" cy="50" r="40" />
-                                    <circle class="donut-ring donut-segment-1" cx="50" cy="50" r="40" stroke-dasharray="250" stroke-dashoffset="30" />
+                                    <circle class="donut-ring donut-segment-1" cx="50" cy="50" r="40" stroke-dasharray="250" stroke-dashoffset="30" data-insight="offer-rate-ring" />
                                 </svg>
-                                <div class="small-donut-text">88%</div>
+                                <div class="small-donut-text" data-insight="offer-rate-donut">—</div>
                             </div>
                         </div>
                         <div class="donut-legend">
-                            <span class="text-cyan">• 88% Accepted</span> <span>• 12% Declined</span>
+                            <span class="text-cyan">• <span data-insight="offer-accepted-pct">—</span> Accepted</span> <span>• <span data-insight="offer-declined-pct">—</span> Declined</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="section-title">Active Jobs</div>
-                <div class="active-jobs-section">
-                    <!-- Table Header -->
+                <!-- Jobs table — populated from /api/jobs -->
+                <div class="active-jobs-section" id="jobs-table" aria-busy="true" aria-live="polite">
+                    <!-- Table Header (kept; rows inserted after this by JS) -->
                     <div class="jobs-table-header">
                         <div>Job Title</div>
                         <div>Department</div>
@@ -464,94 +466,24 @@
                         <div>Progress</div>
                         <div style="text-align:center;">Actions</div>
                     </div>
+                </div>
 
-                    <!-- Row 1 -->
-                    <div class="job-row">
-                        <div class="job-title-col">
-                            <div class="job-icon" style="background: rgba(0,240,255,0.1); color: var(--neon-cyan);"><i data-lucide="user"></i></div>
-                            <div>
-                                <h4>Senior Product Designer</h4>
-                                <p>Design</p>
-                            </div>
-                        </div>
-                        <div class="dept-col">Design</div>
-                        <div class="applicants-col">
-                            <div class="avatar-stack">
-                                <img src="https://ui-avatars.com/api/?name=A+B&background=random" alt="1">
-                                <img src="https://ui-avatars.com/api/?name=C+D&background=random" alt="2">
-                            </div>
-                            <span class="apps-count">52 Apps</span>
-                        </div>
-                        <div><span class="stage-badge stage-interview">Interview</span></div>
-                        <div><div class="progress-col"><div class="progress-fill fill-cyan" style="width: 75%;"></div></div></div>
-                        <div><button class="btn-manage">Manage</button></div>
-                    </div>
-
-                    <!-- Row 2 -->
-                    <div class="job-row">
-                        <div class="job-title-col">
-                            <div class="job-icon" style="background: rgba(58,134,255,0.1); color: var(--neon-blue);"><i data-lucide="layers"></i></div>
-                            <div>
-                                <h4>Full Stack Engineer</h4>
-                                <p>Engineering</p>
-                            </div>
-                        </div>
-                        <div class="dept-col">Engineering</div>
-                        <div class="applicants-col">
-                            <div class="avatar-stack">
-                                <img src="https://ui-avatars.com/api/?name=E+F&background=random" alt="1">
-                                <img src="https://ui-avatars.com/api/?name=G+H&background=random" alt="2">
-                            </div>
-                            <span class="apps-count">68 Apps</span>
-                        </div>
-                        <div><span class="stage-badge stage-screening">Screening</span></div>
-                        <div><div class="progress-col"><div class="progress-fill fill-blue" style="width: 60%;"></div></div></div>
-                        <div><button class="btn-manage">Manage</button></div>
-                    </div>
-
-                    <!-- Row 3 -->
-                    <div class="job-row">
-                        <div class="job-title-col">
-                            <div class="job-icon" style="background: rgba(181,55,242,0.1); color: var(--neon-purple);"><i data-lucide="megaphone"></i></div>
-                            <div>
-                                <h4>Marketing Manager</h4>
-                                <p>Growth</p>
-                            </div>
-                        </div>
-                        <div class="dept-col">Growth</div>
-                        <div class="applicants-col">
-                            <div class="avatar-stack">
-                                <img src="https://ui-avatars.com/api/?name=I+J&background=random" alt="1">
-                                <img src="https://ui-avatars.com/api/?name=K+L&background=random" alt="2">
-                            </div>
-                            <span class="apps-count">41 Apps</span>
-                        </div>
-                        <div><span class="stage-badge stage-final">Final Round</span></div>
-                        <div><div class="progress-col"><div class="progress-fill fill-purple" style="width: 90%;"></div></div></div>
-                        <div><button class="btn-manage">Manage</button></div>
-                    </div>
-
-                    <!-- Row 4 -->
-                    <div class="job-row">
-                        <div class="job-title-col">
-                            <div class="job-icon" style="background: rgba(0,255,136,0.1); color: var(--neon-green);"><i data-lucide="flask-conical"></i></div>
-                            <div>
-                                <h4>Data Scientist</h4>
-                                <p>Data</p>
-                            </div>
-                        </div>
-                        <div class="dept-col">Data</div>
-                        <div class="applicants-col">
-                            <div class="avatar-stack">
-                                <img src="https://ui-avatars.com/api/?name=M+N&background=random" alt="1">
-                                <img src="https://ui-avatars.com/api/?name=O+P&background=random" alt="2">
-                            </div>
-                            <span class="apps-count">35 Apps</span>
-                        </div>
-                        <div><span class="stage-badge stage-reviewing">Reviewing</span></div>
-                        <div><div class="progress-col"><div class="progress-fill fill-green" style="width: 40%;"></div></div></div>
-                        <div><button class="btn-manage">Manage</button></div>
-                    </div>
+                <!-- Loading / empty / error states for jobs -->
+                <div class="job-state job-state-loading" id="jobs-loading" hidden>
+                    <i data-lucide="loader-2" class="spin"></i>
+                    <p>Loading jobs…</p>
+                </div>
+                <div class="job-state job-state-empty" id="jobs-empty" hidden>
+                    <div class="job-state-icon"><i data-lucide="briefcase"></i></div>
+                    <h4>No jobs yet</h4>
+                    <p>Create your first requisition to start collecting applications.</p>
+                    <button type="button" class="btn-add-candidate" id="open-create-job-empty"><i data-lucide="plus"></i> <span>Create New Job</span></button>
+                </div>
+                <div class="job-state job-state-error" id="jobs-error" hidden>
+                    <div class="job-state-icon error"><i data-lucide="alert-triangle"></i></div>
+                    <h4>We couldn't load jobs</h4>
+                    <p id="jobs-error-msg">Something went wrong while reaching the server.</p>
+                    <button type="button" class="btn-retry-jobs" id="jobs-retry"><i data-lucide="refresh-cw"></i> <span>Retry</span></button>
                 </div>
             </div>
             <div id="calendar-screen" class="page-view" style="display: none;">
@@ -723,33 +655,57 @@
             }
             </style>
             <div id="pipeline-screen" class="page-view" style="display: none;">
-                <div class="pipeline-layout">
+                <!-- Loading / error states for the job-detail fetch -->
+                <div class="cd-state cd-state-loading" id="jd-loading" hidden>
+                    <i data-lucide="loader-2" class="spin"></i>
+                    <p>Loading job…</p>
+                </div>
+                <div class="cd-state cd-state-error" id="jd-error" hidden>
+                    <div class="cd-state-icon error"><i data-lucide="alert-triangle"></i></div>
+                    <h4>We couldn't load this job</h4>
+                    <p id="jd-error-msg">Something went wrong while reaching the server.</p>
+                    <button type="button" class="btn-retry-cd" id="jd-retry"><i data-lucide="refresh-cw"></i> <span>Retry</span></button>
+                </div>
+
+                <div class="pipeline-layout" id="jd-body">
                     <!-- Left Sidebar -->
                     <div class="job-desc-sidebar">
                         <div>
                             <h2>Job Description</h2>
                             <p style="color:var(--text-secondary); font-size:0.85rem; margin-top: 16px;">Job Title</p>
-                            <h1 class="job-title-large">Senior UI/UX Designer</h1>
+                            <h1 class="job-title-large" data-jd="title">—</h1>
                             <div class="job-location-status">
-                                <span><i data-lucide="map-pin"></i> New York, NY</span>
-                                <span class="status-active">Active</span>
+                                <span><i data-lucide="map-pin"></i> <span data-jd="location">—</span></span>
+                                <span class="status-active" data-jd="status-pill">Active</span>
+                            </div>
+                            <div class="jd-salary-row" data-jd="salary-row" hidden>
+                                <i data-lucide="dollar-sign"></i> <span data-jd="salary">—</span>
                             </div>
                         </div>
 
-                        <div class="desc-section">
+                        <div class="desc-section" data-jd="overview-section" hidden>
                             <h3>Overview</h3>
-                            <p>We are seeking an experienced Senior UI/UX Designer to craft beautiful and intuitive web experiences. You will be responsible for the end-to-end design process, creating high-fidelity mockups, and collaborating closely with our engineering team to ensure pixel-perfect implementation.</p>
+                            <p data-jd="overview">—</p>
                         </div>
 
-                        <div class="desc-section">
+                        <div class="desc-section" data-jd="responsibilities-section" hidden>
                             <h3>Key Responsibilities</h3>
-                            <ul>
-                                <li>Design high-fidelity mockups for web and mobile applications.</li>
-                                <li>Collaborate with product and engineering teams on feature specs.</li>
-                                <li>Conduct user research and usability testing.</li>
-                                <li>Maintain and expand our comprehensive design system.</li>
-                                <li>Mentor junior designers and participate in design critiques.</li>
-                            </ul>
+                            <ul data-jd="responsibilities-list"></ul>
+                        </div>
+
+                        <div class="desc-section" data-jd="requirements-section" hidden>
+                            <h3>Requirements</h3>
+                            <ul data-jd="requirements-list"></ul>
+                        </div>
+
+                        <div class="desc-section" data-jd="perks-section" hidden>
+                            <h3>Perks</h3>
+                            <ul data-jd="perks-list"></ul>
+                        </div>
+
+                        <div class="desc-section" data-jd="hm-section" hidden>
+                            <h3>Hiring Manager</h3>
+                            <p data-jd="hm">—</p>
                         </div>
                     </div>
 
@@ -758,8 +714,8 @@
                         <div class="job-details-top">
                             <div class="job-details-top-row">
                                 <div class="job-details-header-info">
-                                    <span class="job-breadcrumb">Jobs / Senior UI/UX Designer</span>
-                                    <h2 id="job-details-title">Senior UI/UX Designer</h2>
+                                    <span class="job-breadcrumb">Jobs / <span data-jd="breadcrumb-title">—</span></span>
+                                    <h2 id="job-details-title" data-jd="title-heading">—</h2>
                                 </div>
                                 <div class="job-details-actions">
                                     <button type="button" class="btn-job-action secondary">
@@ -774,12 +730,12 @@
                             <div class="pipeline-header">
                                 <div class="pipeline-stats">
                                     <div class="stat-item">
-                                        <span class="stat-val">32</span>
+                                        <span class="stat-val" data-jd="stat-total">0</span>
                                         <span class="stat-label">Total Applicants</span>
                                     </div>
                                     <div class="stat-divider"></div>
                                     <div class="stat-item">
-                                        <span class="stat-val">8</span>
+                                        <span class="stat-val" data-jd="stat-screening">0</span>
                                         <span class="stat-label">Screening</span>
                                     </div>
                                 </div>
@@ -789,453 +745,43 @@
                             </div>
                         </div>
 
-                        <div class="kanban-board">
-                            <!-- Applied Column -->
-                            <div class="kanban-column col-applied">
+                        <div class="kanban-board" data-jd="kanban-board">
+                            <div class="kanban-column col-applied" data-jd-column="applied">
                                 <div class="kanban-col-header">
                                     <div class="kanban-col-title">
                                         <h4>Applied</h4>
                                         <span>#32D3EE</span>
                                     </div>
-                                    <div class="col-count">5</div>
-                                </div>
-                                <div class="candidate-card">
-                                    <div class="card-header">
-                                        <img src="https://ui-avatars.com/api/?name=Sarah+Jenkins&background=random" alt="Avatar">
-                                        <i data-lucide="more-vertical"></i>
-                                    </div>
-                                    <div class="card-info">
-                                        <h5>Sarah Jenkins</h5>
-                                        <p>UI/UX Lead</p>
-                                    </div>
-                                    <div class="card-score">
-                                        <span class="score-label">Score</span>
-                                        <span class="score-val">92%</span>
-                                    </div>
-                                    <div class="card-tags">
-                                        <span>Experienced</span>
-                                        <span>Figma</span>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="check-circle-2" class="check-icon"></i>
-                                            <i data-lucide="layout"></i>
-                                        </div>
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="clock"></i>
-                                            <i data-lucide="calendar"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="candidate-card">
-                                    <div class="card-header">
-                                        <img src="https://ui-avatars.com/api/?name=Sarah+Jenkins&background=random" alt="Avatar">
-                                        <i data-lucide="more-vertical"></i>
-                                    </div>
-                                    <div class="card-info">
-                                        <h5>Sarah Jenkins</h5>
-                                        <p>UI/UX Lead</p>
-                                    </div>
-                                    <div class="card-score">
-                                        <span class="score-label">Score</span>
-                                        <span class="score-val">92%</span>
-                                    </div>
-                                    <div class="card-tags">
-                                        <span>Experienced</span>
-                                        <span>Figma</span>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="check-circle-2" class="check-icon"></i>
-                                            <i data-lucide="layout"></i>
-                                        </div>
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="clock"></i>
-                                            <i data-lucide="calendar"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="candidate-card">
-                                    <div class="card-header">
-                                        <img src="https://ui-avatars.com/api/?name=Sarah+Ohims&background=random" alt="Avatar">
-                                        <i data-lucide="more-vertical"></i>
-                                    </div>
-                                    <div class="card-info">
-                                        <h5>Sarah Ohims</h5>
-                                        <p>UI/UX Lead</p>
-                                    </div>
-                                    <div class="card-score">
-                                        <span class="score-label">Score</span>
-                                        <span class="score-val">92%</span>
-                                    </div>
-                                    <div class="card-tags">
-                                        <span>Experienced</span>
-                                        <span>Figma</span>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="check-circle-2" class="check-icon"></i>
-                                            <i data-lucide="layout"></i>
-                                        </div>
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="clock"></i>
-                                            <i data-lucide="calendar"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="candidate-card">
-                                    <div class="card-header">
-                                        <img src="https://ui-avatars.com/api/?name=Saran+Obrim&background=random" alt="Avatar">
-                                        <i data-lucide="more-vertical"></i>
-                                    </div>
-                                    <div class="card-info">
-                                        <h5>Saran Obrim</h5>
-                                        <p>UI/UX Lead</p>
-                                    </div>
-                                    <div class="card-score">
-                                        <span class="score-label">Score</span>
-                                        <span class="score-val">92%</span>
-                                    </div>
-                                    <div class="card-tags">
-                                        <span>Experienced</span>
-                                        <span>Figma</span>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="check-circle-2" class="check-icon"></i>
-                                            <i data-lucide="layout"></i>
-                                        </div>
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="clock"></i>
-                                            <i data-lucide="calendar"></i>
-                                        </div>
-                                    </div>
+                                    <div class="col-count" data-jd-count="applied">0</div>
                                 </div>
                             </div>
-
-                            <!-- Screening Column -->
-                            <div class="kanban-column col-screening">
+                            <div class="kanban-column col-screening" data-jd-column="screening">
                                 <div class="kanban-col-header">
                                     <div class="kanban-col-title">
                                         <h4>Screening</h4>
                                         <span>#F8BF24</span>
                                     </div>
-                                    <div class="col-count">3</div>
-                                </div>
-                                <div class="candidate-card">
-                                    <div class="card-header">
-                                        <img src="https://ui-avatars.com/api/?name=Sana+Dlaun&background=random" alt="Avatar">
-                                        <i data-lucide="more-vertical"></i>
-                                    </div>
-                                    <div class="card-info">
-                                        <h5>Sana Dlaun</h5>
-                                        <p>UI/UX Lead</p>
-                                    </div>
-                                    <div class="card-score">
-                                        <span class="score-label">Score</span>
-                                        <span class="score-val">92%</span>
-                                    </div>
-                                    <div class="card-tags">
-                                        <span>Experienced</span>
-                                        <span>Figma</span>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="check-circle-2" class="check-icon"></i>
-                                            <i data-lucide="layout"></i>
-                                        </div>
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="clock"></i>
-                                            <i data-lucide="calendar"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="candidate-card">
-                                    <div class="card-header">
-                                        <img src="https://ui-avatars.com/api/?name=Sana+Dlaun&background=random" alt="Avatar">
-                                        <i data-lucide="more-vertical"></i>
-                                    </div>
-                                    <div class="card-info">
-                                        <h5>Sana Dlaun</h5>
-                                        <p>UI/UX Lead</p>
-                                    </div>
-                                    <div class="card-score">
-                                        <span class="score-label">Score</span>
-                                        <span class="score-val">92%</span>
-                                    </div>
-                                    <div class="card-tags">
-                                        <span>Experienced</span>
-                                        <span>Figma</span>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="check-circle-2" class="check-icon"></i>
-                                            <i data-lucide="layout"></i>
-                                        </div>
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="clock"></i>
-                                            <i data-lucide="calendar"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="candidate-card">
-                                    <div class="card-header">
-                                        <img src="https://ui-avatars.com/api/?name=Sarm+Dlaun&background=random" alt="Avatar">
-                                        <i data-lucide="more-vertical"></i>
-                                    </div>
-                                    <div class="card-info">
-                                        <h5>Sarm Dlaun</h5>
-                                        <p>UI/UX Lead</p>
-                                    </div>
-                                    <div class="card-score">
-                                        <span class="score-label">Score</span>
-                                        <span class="score-val">92%</span>
-                                    </div>
-                                    <div class="card-tags">
-                                        <span>Experienced</span>
-                                        <span>Figma</span>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="check-circle-2" class="check-icon"></i>
-                                            <i data-lucide="layout"></i>
-                                        </div>
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="clock"></i>
-                                            <i data-lucide="calendar"></i>
-                                        </div>
-                                    </div>
+                                    <div class="col-count" data-jd-count="screening">0</div>
                                 </div>
                             </div>
-
-                            <!-- Interview Column -->
-                            <div class="kanban-column col-interview">
+                            <div class="kanban-column col-interview" data-jd-column="interview">
                                 <div class="kanban-col-header">
                                     <div class="kanban-col-title">
                                         <h4>Interview</h4>
                                         <span>#818CF8</span>
                                     </div>
-                                    <div class="col-count">4</div>
-                                </div>
-                                <div class="candidate-card">
-                                    <div class="card-header">
-                                        <img src="https://ui-avatars.com/api/?name=Sarah+Derian&background=random" alt="Avatar">
-                                        <i data-lucide="more-vertical"></i>
-                                    </div>
-                                    <div class="card-info">
-                                        <h5>Sarah Derian</h5>
-                                        <p>UI/UX Lead</p>
-                                    </div>
-                                    <div class="card-score">
-                                        <span class="score-label">Score</span>
-                                        <span class="score-val">92%</span>
-                                    </div>
-                                    <div class="card-tags">
-                                        <span>Experienced</span>
-                                        <span>Figma</span>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="check-circle-2" class="check-icon"></i>
-                                            <i data-lucide="layout"></i>
-                                        </div>
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="clock"></i>
-                                            <i data-lucide="calendar"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="candidate-card">
-                                    <div class="card-header">
-                                        <img src="https://ui-avatars.com/api/?name=Sarah+Jenkins&background=random" alt="Avatar">
-                                        <i data-lucide="more-vertical"></i>
-                                    </div>
-                                    <div class="card-info">
-                                        <h5>Sarah Jenkins</h5>
-                                        <p>UI/UX Lead</p>
-                                    </div>
-                                    <div class="card-score">
-                                        <span class="score-label">Score</span>
-                                        <span class="score-val">92%</span>
-                                    </div>
-                                    <div class="card-tags">
-                                        <span>Experienced</span>
-                                        <span>Figma</span>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="check-circle-2" class="check-icon"></i>
-                                            <i data-lucide="layout"></i>
-                                        </div>
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="clock"></i>
-                                            <i data-lucide="calendar"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="candidate-card">
-                                    <div class="card-header">
-                                        <img src="https://ui-avatars.com/api/?name=Sarah+Jenkins&background=random" alt="Avatar">
-                                        <i data-lucide="more-vertical"></i>
-                                    </div>
-                                    <div class="card-info">
-                                        <h5>Sarah Jenkins</h5>
-                                        <p>UI/UX Lead</p>
-                                    </div>
-                                    <div class="card-score">
-                                        <span class="score-label">Score</span>
-                                        <span class="score-val">92%</span>
-                                    </div>
-                                    <div class="card-tags">
-                                        <span>Experienced</span>
-                                        <span>Figma</span>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="check-circle-2" class="check-icon"></i>
-                                            <i data-lucide="layout"></i>
-                                        </div>
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="clock"></i>
-                                            <i data-lucide="calendar"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="candidate-card">
-                                    <div class="card-header">
-                                        <img src="https://ui-avatars.com/api/?name=Denn+Euimite&background=random" alt="Avatar">
-                                        <i data-lucide="more-vertical"></i>
-                                    </div>
-                                    <div class="card-info">
-                                        <h5>Denn Euimite</h5>
-                                        <p>UI/UX Lead</p>
-                                    </div>
-                                    <div class="card-score">
-                                        <span class="score-label">Score</span>
-                                        <span class="score-val">92%</span>
-                                    </div>
-                                    <div class="card-tags">
-                                        <span>Experienced</span>
-                                        <span>Figma</span>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="check-circle-2" class="check-icon"></i>
-                                            <i data-lucide="layout"></i>
-                                        </div>
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="clock"></i>
-                                            <i data-lucide="calendar"></i>
-                                        </div>
-                                    </div>
+                                    <div class="col-count" data-jd-count="interview">0</div>
                                 </div>
                             </div>
-                            
-                            <!-- Offer Column -->
-                            <div class="kanban-column col-offer">
+                            <div class="kanban-column col-offer" data-jd-column="offer">
                                 <div class="kanban-col-header">
                                     <div class="kanban-col-title">
                                         <h4>Offer</h4>
-                                        <span>#10B981</span>
+                                        <span>#00FF88</span>
                                     </div>
-                                    <div class="col-count">2</div>
-                                </div>
-                                <div class="candidate-card">
-                                    <div class="card-header">
-                                        <img src="https://ui-avatars.com/api/?name=Lutra+Boain&background=random" alt="Avatar">
-                                        <i data-lucide="more-vertical"></i>
-                                    </div>
-                                    <div class="card-info">
-                                        <h5>Lutra Boain</h5>
-                                        <p>UI/UX Lead</p>
-                                    </div>
-                                    <div class="card-score">
-                                        <span class="score-label">Score</span>
-                                        <span class="score-val">92%</span>
-                                    </div>
-                                    <div class="card-tags">
-                                        <span>Experienced</span>
-                                        <span>Figma</span>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="check-circle-2" class="check-icon"></i>
-                                            <i data-lucide="layout"></i>
-                                        </div>
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="clock"></i>
-                                            <i data-lucide="calendar"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="candidate-card">
-                                    <div class="card-header">
-                                        <img src="https://ui-avatars.com/api/?name=Saita+Donads&background=random" alt="Avatar">
-                                        <i data-lucide="more-vertical"></i>
-                                    </div>
-                                    <div class="card-info">
-                                        <h5>Saita Donads</h5>
-                                        <p>UI/UX Lead</p>
-                                    </div>
-                                    <div class="card-score">
-                                        <span class="score-label">Score</span>
-                                        <span class="score-val">92%</span>
-                                    </div>
-                                    <div class="card-tags">
-                                        <span>Experienced</span>
-                                        <span>Figma</span>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="check-circle-2" class="check-icon"></i>
-                                            <i data-lucide="layout"></i>
-                                        </div>
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="clock"></i>
-                                            <i data-lucide="calendar"></i>
-                                        </div>
-                                    </div>
+                                    <div class="col-count" data-jd-count="offer">0</div>
                                 </div>
                             </div>
-                            
-                            <!-- Hired Column -->
-                            <div class="kanban-column col-hired">
-                                <div class="kanban-col-header">
-                                    <div class="kanban-col-title">
-                                        <h4>Hired</h4>
-                                        <span>#4ADE80</span>
-                                    </div>
-                                    <div class="col-count">1</div>
-                                </div>
-                                <div class="candidate-card">
-                                    <div class="card-header">
-                                        <img src="https://ui-avatars.com/api/?name=Ahan+I&background=random" alt="Avatar">
-                                        <i data-lucide="more-vertical"></i>
-                                    </div>
-                                    <div class="card-info">
-                                        <h5>Ahan I.</h5>
-                                        <p>UI/UX Lead</p>
-                                    </div>
-                                    <div class="card-score">
-                                        <span class="score-label">Score</span>
-                                        <span class="score-val">92%</span>
-                                    </div>
-                                    <div class="card-tags">
-                                        <span>Experienced</span>
-                                    </div>
-                                    <div class="card-footer">
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="check-circle-2" class="check-icon"></i>
-                                            <i data-lucide="layout"></i>
-                                        </div>
-                                        <div class="card-footer-icons">
-                                            <i data-lucide="clock"></i>
-                                            <i data-lucide="calendar"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                     </div>
                 </div>
@@ -1257,16 +803,16 @@
                     </div>
                 </div>
 
-                <!-- Insights strip -->
-                <div class="candidates-insights">
+                <!-- Insights strip — values populated from /api/candidates/insights -->
+                <div class="candidates-insights" id="candidates-insights" aria-busy="true">
                     <div class="glass-panel cand-insight cand-insight-cyan">
                         <div class="cand-insight-header">
                             <span class="cand-insight-title"><i data-lucide="users"></i> Total Candidates</span>
                             <i data-lucide="more-vertical" class="text-secondary"></i>
                         </div>
                         <div class="cand-insight-value-row">
-                            <span class="cand-insight-value">1,154</span>
-                            <span class="cand-insight-trend trend-up">+82</span>
+                            <span class="cand-insight-value" data-insight="total">—</span>
+                            <span class="cand-insight-trend trend-up" data-insight="total-trend">—</span>
                         </div>
                         <div class="cand-insight-chart">
                             <svg width="100%" height="100%" viewBox="0 0 100 30" preserveAspectRatio="none">
@@ -1281,8 +827,8 @@
                             <i data-lucide="more-vertical" class="text-secondary"></i>
                         </div>
                         <div class="cand-insight-value-row">
-                            <span class="cand-insight-value">87%</span>
-                            <span class="cand-insight-trend trend-up">+3 pts</span>
+                            <span class="cand-insight-value" data-insight="avg-match">—</span>
+                            <span class="cand-insight-trend trend-up" data-insight="avg-match-label">across scored</span>
                         </div>
                         <div class="cand-insight-chart">
                             <svg width="100%" height="100%" viewBox="0 0 100 30" preserveAspectRatio="none">
@@ -1297,8 +843,8 @@
                             <i data-lucide="more-vertical" class="text-secondary"></i>
                         </div>
                         <div class="cand-insight-value-row">
-                            <span class="cand-insight-value">128</span>
-                            <span class="cand-insight-trend trend-up">11% conv.</span>
+                            <span class="cand-insight-value" data-insight="shortlisted">—</span>
+                            <span class="cand-insight-trend trend-up" data-insight="shortlisted-conv">—</span>
                         </div>
                         <div class="cand-insight-chart">
                             <svg width="100%" height="100%" viewBox="0 0 100 30" preserveAspectRatio="none">
@@ -1313,8 +859,8 @@
                             <i data-lucide="more-vertical" class="text-secondary"></i>
                         </div>
                         <div class="cand-insight-value-row">
-                            <span class="cand-insight-value">LinkedIn</span>
-                            <span class="cand-insight-trend">42%</span>
+                            <span class="cand-insight-value" data-insight="top-source">—</span>
+                            <span class="cand-insight-trend" data-insight="top-source-pct">—</span>
                         </div>
                         <div class="cand-insight-chart">
                             <svg width="100%" height="100%" viewBox="0 0 100 30" preserveAspectRatio="none">
@@ -1324,157 +870,25 @@
                     </div>
                 </div>
 
-                <div class="candidates-grid">
-                    <!-- Candidate 1 -->
-                    <div class="candidate-card" onclick="navigateTo('candidate-details-screen')">
-                        <div class="card-header">
-                            <img src="https://ui-avatars.com/api/?name=Eleanor+Vance&background=random" alt="Avatar">
-                            <i data-lucide="more-vertical"></i>
-                        </div>
-                        <div class="card-info">
-                            <h5>Eleanor Vance</h5>
-                            <p>Senior Frontend Engineer</p>
-                        </div>
-                        <div class="card-score">
-                            <span class="score-label">AI Match Score</span>
-                            <span class="score-val" style="color:var(--neon-cyan)">95%</span>
-                        </div>
-                        <div class="card-tags">
-                            <span>React</span>
-                            <span>Vue</span>
-                            <span>UI/UX</span>
-                        </div>
-                        <div class="card-footer">
-                            <div class="card-footer-icons">
-                                <i data-lucide="check-circle-2" style="color:var(--neon-cyan)"></i>
-                                <i data-lucide="layout"></i>
-                            </div>
-                            <div class="card-footer-icons">
-                                <i data-lucide="clock"></i>
-                                <i data-lucide="calendar"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Candidate 2 -->
-                    <div class="candidate-card" onclick="navigateTo('candidate-details-screen')">
-                        <div class="card-header">
-                            <img src="https://ui-avatars.com/api/?name=Sarah+Jenkins&background=random" alt="Avatar">
-                            <i data-lucide="more-vertical"></i>
-                        </div>
-                        <div class="card-info">
-                            <h5>Sarah Jenkins</h5>
-                            <p>UI/UX Lead</p>
-                        </div>
-                        <div class="card-score">
-                            <span class="score-label">AI Match Score</span>
-                            <span class="score-val" style="color:var(--neon-purple)">92%</span>
-                        </div>
-                        <div class="card-tags">
-                            <span>Experienced</span>
-                            <span>Figma</span>
-                        </div>
-                        <div class="card-footer">
-                            <div class="card-footer-icons">
-                                <i data-lucide="check-circle-2" style="color:var(--neon-purple)"></i>
-                                <i data-lucide="layout"></i>
-                            </div>
-                            <div class="card-footer-icons">
-                                <i data-lucide="clock"></i>
-                                <i data-lucide="calendar"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Candidate 3 -->
-                    <div class="candidate-card" onclick="navigateTo('candidate-details-screen')">
-                        <div class="card-header">
-                            <img src="https://ui-avatars.com/api/?name=Alex+Morgan&background=random" alt="Avatar">
-                            <i data-lucide="more-vertical"></i>
-                        </div>
-                        <div class="card-info">
-                            <h5>Alex Morgan</h5>
-                            <p>Product Designer</p>
-                        </div>
-                        <div class="card-score">
-                            <span class="score-label">AI Match Score</span>
-                            <span class="score-val" style="color:#F8BF24">88%</span>
-                        </div>
-                        <div class="card-tags">
-                            <span>Mid-level</span>
-                            <span>Figma</span>
-                        </div>
-                        <div class="card-footer">
-                            <div class="card-footer-icons">
-                                <i data-lucide="check-circle-2" style="color:#F8BF24"></i>
-                                <i data-lucide="layout"></i>
-                            </div>
-                            <div class="card-footer-icons">
-                                <i data-lucide="clock"></i>
-                                <i data-lucide="calendar"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Candidate 4 -->
-                    <div class="candidate-card" onclick="navigateTo('candidate-details-screen')">
-                        <div class="card-header">
-                            <img src="https://ui-avatars.com/api/?name=Lutra+Boain&background=random" alt="Avatar">
-                            <i data-lucide="more-vertical"></i>
-                        </div>
-                        <div class="card-info">
-                            <h5>Lutra Boain</h5>
-                            <p>Backend Developer</p>
-                        </div>
-                        <div class="card-score">
-                            <span class="score-label">AI Match Score</span>
-                            <span class="score-val" style="color:#10B981">97%</span>
-                        </div>
-                        <div class="card-tags">
-                            <span>Python</span>
-                            <span>Django</span>
-                        </div>
-                        <div class="card-footer">
-                            <div class="card-footer-icons">
-                                <i data-lucide="check-circle-2" style="color:#10B981"></i>
-                                <i data-lucide="layout"></i>
-                            </div>
-                            <div class="card-footer-icons">
-                                <i data-lucide="clock"></i>
-                                <i data-lucide="calendar"></i>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Candidate grid — populated from /api/candidates -->
+                <div class="candidates-grid" id="candidates-grid" aria-busy="true" aria-live="polite"></div>
 
-                    <!-- Candidate 5 -->
-                    <div class="candidate-card" onclick="navigateTo('candidate-details-screen')">
-                        <div class="card-header">
-                            <img src="https://ui-avatars.com/api/?name=Sana+Dlaun&background=random" alt="Avatar">
-                            <i data-lucide="more-vertical"></i>
-                        </div>
-                        <div class="card-info">
-                            <h5>Sana Dlaun</h5>
-                            <p>DevOps Engineer</p>
-                        </div>
-                        <div class="card-score">
-                            <span class="score-label">AI Match Score</span>
-                            <span class="score-val" style="color:#32D3EE">84%</span>
-                        </div>
-                        <div class="card-tags">
-                            <span>AWS</span>
-                            <span>Docker</span>
-                        </div>
-                        <div class="card-footer">
-                            <div class="card-footer-icons">
-                                <i data-lucide="check-circle-2" style="color:#32D3EE"></i>
-                                <i data-lucide="layout"></i>
-                            </div>
-                            <div class="card-footer-icons">
-                                <i data-lucide="clock"></i>
-                                <i data-lucide="calendar"></i>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Empty / error / loading states share this slot, JS toggles visibility -->
+                <div class="cand-state cand-state-loading" id="candidates-loading" hidden>
+                    <i data-lucide="loader-2" class="spin"></i>
+                    <p>Loading candidates…</p>
+                </div>
+                <div class="cand-state cand-state-empty" id="candidates-empty" hidden>
+                    <div class="cand-state-icon"><i data-lucide="users"></i></div>
+                    <h4>No candidates yet</h4>
+                    <p>Add your first candidate to get an AI match score and start filling the pipeline.</p>
+                    <button type="button" class="btn-add-candidate" id="open-add-candidate-empty"><i data-lucide="user-plus"></i> <span>Add Candidate</span></button>
+                </div>
+                <div class="cand-state cand-state-error" id="candidates-error" hidden>
+                    <div class="cand-state-icon error"><i data-lucide="alert-triangle"></i></div>
+                    <h4>We couldn't load candidates</h4>
+                    <p id="candidates-error-msg">Something went wrong while reaching the server.</p>
+                    <button type="button" class="btn-retry-candidates" id="candidates-retry"><i data-lucide="refresh-cw"></i> <span>Retry</span></button>
                 </div>
             </div>
 
@@ -1598,9 +1012,22 @@
 
             <!-- Candidate Details Screen -->
             <div id="candidate-details-screen" class="page-view" style="display: none;">
+                <!-- Loading / error states for the candidate detail fetch -->
+                <div class="cd-state cd-state-loading" id="cd-loading" hidden>
+                    <i data-lucide="loader-2" class="spin"></i>
+                    <p>Loading candidate…</p>
+                </div>
+                <div class="cd-state cd-state-error" id="cd-error" hidden>
+                    <div class="cd-state-icon error"><i data-lucide="alert-triangle"></i></div>
+                    <h4>We couldn't load this candidate</h4>
+                    <p id="cd-error-msg">Something went wrong while reaching the server.</p>
+                    <button type="button" class="btn-retry-cd" id="cd-retry"><i data-lucide="refresh-cw"></i> <span>Retry</span></button>
+                </div>
+
+                <div id="cd-body">
                 <!-- Actions toolbar (page title comes from the topbar) -->
                 <div class="cd-page-header">
-                    <span class="cd-context"><i data-lucide="briefcase"></i> Reviewing for <strong>Senior Frontend Engineer</strong> · Round 2</span>
+                    <span class="cd-context"><i data-lucide="briefcase"></i> Reviewing for <strong data-cd="context-position">—</strong> · <span data-cd="context-round">—</span></span>
                     <div class="candidate-actions">
                         <button type="button" class="btn-glass-action tone-ai"><i data-lucide="sparkles"></i> <span>Find Similar</span></button>
                         <button type="button" class="btn-glass-action tone-blue"><i data-lucide="mail"></i> <span>Message</span></button>
@@ -1614,17 +1041,17 @@
                     <!-- Hero -->
                     <div class="cd-hero">
                         <div class="cd-hero-avatar-wrap">
-                            <img src="https://ui-avatars.com/api/?name=Eleanor+Vance&background=random&size=200" alt="Eleanor Vance" class="cd-hero-avatar">
-                            <span class="cd-hero-status-dot" aria-label="Active"></span>
+                            <img src="https://ui-avatars.com/api/?name=Candidate&background=random&size=200" alt="Candidate avatar" class="cd-hero-avatar" data-cd="avatar">
+                            <span class="cd-hero-status-dot" aria-label="Active" data-cd="status-dot"></span>
                         </div>
                         <div class="cd-hero-info">
-                            <h3>Eleanor Vance</h3>
-                            <p>Senior Frontend Engineer</p>
+                            <h3 data-cd="name">—</h3>
+                            <p data-cd="position">—</p>
                             <div class="cd-hero-meta">
-                                <span class="cd-hero-chip"><i data-lucide="map-pin"></i> San Francisco, CA</span>
-                                <span class="cd-hero-chip cd-chip-active"><span class="cd-chip-dot"></span> Active</span>
-                                <span class="cd-hero-chip cd-chip-stage"><i data-lucide="layers"></i> Round 2 · Interview</span>
-                                <span class="cd-hero-chip cd-chip-fit"><i data-lucide="zap"></i> Strong Fit</span>
+                                <span class="cd-hero-chip" data-cd="chip-location" hidden><i data-lucide="map-pin"></i> <span data-cd="location">—</span></span>
+                                <span class="cd-hero-chip cd-chip-active" data-cd="chip-status"><span class="cd-chip-dot"></span> <span data-cd="status-label">Active</span></span>
+                                <span class="cd-hero-chip cd-chip-stage" data-cd="chip-stage"><i data-lucide="layers"></i> <span data-cd="stage-round">—</span></span>
+                                <span class="cd-hero-chip cd-chip-fit" data-cd="chip-fit" hidden><i data-lucide="zap"></i> <span data-cd="fit-verdict">—</span></span>
                             </div>
                         </div>
                         <div class="cd-score-block">
@@ -1637,10 +1064,10 @@
                                         </linearGradient>
                                     </defs>
                                     <circle class="cd-score-ring-bg" cx="50" cy="50" r="40"/>
-                                    <circle class="cd-score-ring-progress" cx="50" cy="50" r="40"/>
+                                    <circle class="cd-score-ring-progress" cx="50" cy="50" r="40" data-cd="score-ring"/>
                                 </svg>
                                 <div class="cd-score-text">
-                                    <span class="cd-score-value">95<small>%</small></span>
+                                    <span class="cd-score-value"><span data-cd="score-value">—</span><small>%</small></span>
                                     <span class="cd-score-label">AI Match</span>
                                 </div>
                             </div>
@@ -1652,22 +1079,22 @@
                         <div class="info-cell">
                             <i data-lucide="mail" class="info-icon"></i>
                             <span class="info-label">EMAIL</span>
-                            <span class="info-value">e.vance@email.com</span>
+                            <span class="info-value" data-cd="email">—</span>
                         </div>
                         <div class="info-cell">
                             <i data-lucide="phone" class="info-icon"></i>
                             <span class="info-label">PHONE</span>
-                            <span class="info-value">(555) 123-4567</span>
+                            <span class="info-value" data-cd="phone">—</span>
                         </div>
                         <div class="info-cell">
                             <i data-lucide="briefcase" class="info-icon"></i>
                             <span class="info-label">EXPERIENCE</span>
-                            <span class="info-value">7 years</span>
+                            <span class="info-value" data-cd="experience">—</span>
                         </div>
                         <div class="info-cell">
                             <i data-lucide="user-check" class="info-icon"></i>
                             <span class="info-label">SOURCE</span>
-                            <span class="info-value">LinkedIn</span>
+                            <span class="info-value" data-cd="source">—</span>
                         </div>
                     </div>
 
@@ -1682,122 +1109,56 @@
                     <div class="cd-grid">
                         <!-- Main column -->
                         <div class="cd-col-main">
-                            <div class="cd-section">
+                            <div class="cd-section" data-cd="experience-section" hidden>
                                 <div class="cd-section-header">
                                     <span class="cd-section-title"><i data-lucide="briefcase"></i> Experience</span>
                                 </div>
-                                <div class="cd-timeline">
-                                    <div class="cd-timeline-item">
-                                        <span class="cd-timeline-dot"></span>
-                                        <div class="cd-timeline-info">
-                                            <h4>Senior Frontend Engineer</h4>
-                                            <p>Apex Solutions</p>
-                                        </div>
-                                        <span class="cd-timeline-meta">4 yrs</span>
-                                    </div>
-                                    <div class="cd-timeline-item">
-                                        <span class="cd-timeline-dot"></span>
-                                        <div class="cd-timeline-info">
-                                            <h4>Frontend Developer</h4>
-                                            <p>BrightTech</p>
-                                        </div>
-                                        <span class="cd-timeline-meta">3 yrs</span>
-                                    </div>
-                                </div>
+                                <div class="cd-timeline" data-cd="experience-list"></div>
                             </div>
 
-                            <div class="cd-section">
+                            <div class="cd-section" data-cd="education-section" hidden>
                                 <div class="cd-section-header">
                                     <span class="cd-section-title"><i data-lucide="graduation-cap"></i> Education</span>
                                 </div>
-                                <div class="cd-timeline">
-                                    <div class="cd-timeline-item">
-                                        <span class="cd-timeline-dot"></span>
-                                        <div class="cd-timeline-info">
-                                            <h4>M.S. Computer Science</h4>
-                                            <p>Stanford University</p>
-                                        </div>
-                                    </div>
-                                    <div class="cd-timeline-item">
-                                        <span class="cd-timeline-dot"></span>
-                                        <div class="cd-timeline-info">
-                                            <h4>B.S. Information Technology</h4>
-                                            <p>UC Berkeley</p>
-                                        </div>
-                                    </div>
-                                </div>
+                                <div class="cd-timeline" data-cd="education-list"></div>
                             </div>
 
-                            <div class="cd-section">
+                            <div class="cd-section" data-cd="skills-section">
                                 <div class="cd-section-header">
                                     <span class="cd-section-title"><i data-lucide="sparkles"></i> Skills</span>
                                 </div>
-                                <div class="cd-skills">
-                                    <span class="cd-skill-tag">React.js</span>
-                                    <span class="cd-skill-tag">Vue.js</span>
-                                    <span class="cd-skill-tag">TypeScript</span>
-                                    <span class="cd-skill-tag">UI/UX</span>
-                                    <span class="cd-skill-tag">GraphQL</span>
+                                <div class="cd-skills" data-cd="skills-list">
+                                    <span class="cd-skill-tag cd-skill-empty">No skills listed</span>
                                 </div>
+                            </div>
+
+                            <div class="cd-section" data-cd="notes-section" hidden>
+                                <div class="cd-section-header">
+                                    <span class="cd-section-title"><i data-lucide="sticky-note"></i> Notes</span>
+                                </div>
+                                <p class="cd-notes-text" data-cd="notes"></p>
                             </div>
                         </div>
 
                         <!-- Side column -->
                         <div class="cd-col-side">
-                            <div class="cd-section">
+                            <div class="cd-section" data-cd="links-section" hidden>
                                 <div class="cd-section-header">
                                     <span class="cd-section-title"><i data-lucide="link-2"></i> Quick Links</span>
                                 </div>
-                                <div class="cd-link-list">
-                                    <a href="#" class="cd-link-row">
-                                        <div class="cd-link-icon icon-cyan"><i data-lucide="linkedin"></i></div>
-                                        <div class="cd-link-text">
-                                            <span class="cd-link-label">LinkedIn</span>
-                                            <span class="cd-link-url">linkedin.com/in/eleanor-vance</span>
-                                        </div>
-                                        <i data-lucide="external-link" class="cd-link-arrow"></i>
-                                    </a>
-                                    <a href="#" class="cd-link-row">
-                                        <div class="cd-link-icon icon-purple"><i data-lucide="folder"></i></div>
-                                        <div class="cd-link-text">
-                                            <span class="cd-link-label">Portfolio</span>
-                                            <span class="cd-link-url">eleanorvance.dev</span>
-                                        </div>
-                                        <i data-lucide="external-link" class="cd-link-arrow"></i>
-                                    </a>
-                                    <a href="#" class="cd-link-row">
-                                        <div class="cd-link-icon icon-green"><i data-lucide="github"></i></div>
-                                        <div class="cd-link-text">
-                                            <span class="cd-link-label">GitHub</span>
-                                            <span class="cd-link-url">github.com/evance</span>
-                                        </div>
-                                        <i data-lucide="external-link" class="cd-link-arrow"></i>
-                                    </a>
-                                </div>
+                                <div class="cd-link-list" data-cd="links-list"></div>
                             </div>
 
-                            <div class="cd-section cd-ai-section">
+                            <div class="cd-section cd-ai-section" data-cd="ai-section" hidden>
                                 <div class="cd-section-header">
                                     <span class="cd-section-title"><i data-lucide="sparkles"></i> AI Highlights</span>
                                 </div>
-                                <div class="cd-highlight-list">
-                                    <div class="cd-highlight">
-                                        <i data-lucide="check-circle-2"></i>
-                                        <span>Strong React + TypeScript fit</span>
-                                    </div>
-                                    <div class="cd-highlight">
-                                        <i data-lucide="check-circle-2"></i>
-                                        <span>Design-system experience</span>
-                                    </div>
-                                    <div class="cd-highlight">
-                                        <i data-lucide="check-circle-2"></i>
-                                        <span>7 yrs senior-level tenure</span>
-                                    </div>
-                                </div>
+                                <div class="cd-highlight-list" data-cd="ai-list"></div>
                             </div>
                         </div>
                     </div>
                 </div>
+                </div><!-- /#cd-body -->
             </div>
         </main>
     </div>

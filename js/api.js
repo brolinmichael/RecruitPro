@@ -31,29 +31,44 @@ class ApiClient {
             headers['Content-Type'] = 'application/json';
         }
 
+        let response;
         try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            response = await fetch(`${API_BASE_URL}${endpoint}`, {
                 ...options,
                 headers
             });
-
-            if (response.status === 401) {
-                // Handle unauthorized (e.g., redirect to login)
-                this.clearToken();
-                window.location.reload(); 
-            }
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || 'API Request Failed');
-            }
-
-            return data;
-        } catch (error) {
-            console.error('API Error:', error);
-            throw error;
+        } catch (networkErr) {
+            // fetch only rejects on network failure — surface a friendly message.
+            const err = new Error('Could not reach the server. Check your connection and try again.');
+            err.cause = networkErr;
+            err.networkError = true;
+            throw err;
         }
+
+        if (response.status === 401) {
+            // Handle unauthorized (e.g., redirect to login)
+            this.clearToken();
+            window.location.reload();
+            // Halt this request chain so callers don't see a partial response.
+            throw new Error('Session expired. Please sign in again.');
+        }
+
+        let data = null;
+        const contentType = response.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+            try { data = await response.json(); } catch (_) { data = null; }
+        } else {
+            try { data = { error: (await response.text()).slice(0, 200) }; } catch (_) { data = null; }
+        }
+
+        if (!response.ok) {
+            const err = new Error((data && data.error) || `Request failed (${response.status}).`);
+            err.status = response.status;
+            err.fields = (data && data.fields) || null;
+            throw err;
+        }
+
+        return data;
     }
 
     // --- Auth ---
@@ -70,8 +85,20 @@ class ApiClient {
     }
 
     // --- Jobs ---
-    getJobs() {
-        return this.request('/jobs');
+    getJobs(params = {}) {
+        const query = new URLSearchParams(
+            Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== '')
+        ).toString();
+        return this.request(`/jobs${query ? `?${query}` : ''}`);
+    }
+
+    getJobsInsights() {
+        return this.request('/jobs/insights');
+    }
+
+    getJob(id) {
+        if (!id) return Promise.reject(new Error('Job id is required.'));
+        return this.request(`/jobs/${encodeURIComponent(id)}`);
     }
 
     createJob(jobData) {
@@ -82,8 +109,20 @@ class ApiClient {
     }
 
     // --- Candidates ---
-    getCandidates() {
-        return this.request('/candidates');
+    getCandidates(params = {}) {
+        const query = new URLSearchParams(
+            Object.entries(params).filter(([, v]) => v !== undefined && v !== null && v !== '')
+        ).toString();
+        return this.request(`/candidates${query ? `?${query}` : ''}`);
+    }
+
+    getCandidatesInsights() {
+        return this.request('/candidates/insights');
+    }
+
+    getCandidate(id) {
+        if (!id) return Promise.reject(new Error('Candidate id is required.'));
+        return this.request(`/candidates/${encodeURIComponent(id)}`);
     }
 
     addCandidate(formData) {

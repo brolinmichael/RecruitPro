@@ -314,8 +314,12 @@
     /* Stay visible while the cards beneath scroll */
     position: sticky;
     top: -14px;             /* offset by column padding so it sits flush with the rounded edge */
-    margin-top: -14px;
-    padding-top: 14px;
+    /* Extend edge-to-edge: cancel the column's 14px padding on all sides,
+       then re-add it as the header's own padding so the inner content keeps
+       its existing breathing room. The background then bleeds to the column
+       border without a visible gutter. */
+    margin: -14px -14px 12px;
+    padding: 14px;
     z-index: 1;
     background: inherit;
     backdrop-filter: blur(8px);
@@ -416,6 +420,17 @@
 }
 
 .candidate-card:active { cursor: grabbing; }
+
+/* Stop the avatar / icons from hijacking the drag. Images are draggable by
+   default in every browser — without these, dragging the card by its
+   avatar starts an image-drag instead of the card-drag. pointer-events:none
+   on these children makes the whole card surface the drag target. */
+.candidate-card img,
+.candidate-card svg {
+    -webkit-user-drag: none;
+    user-select: none;
+    pointer-events: none;
+}
 
 .candidate-card.is-new {
     animation: cardAddIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;

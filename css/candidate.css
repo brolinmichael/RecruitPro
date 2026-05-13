@@ -955,3 +955,207 @@
 .cd-col-main > .cd-section:nth-child(3) { animation-delay: 0.34s; }
 .cd-col-side > .cd-section:nth-child(1) { animation-delay: 0.24s; }
 .cd-col-side > .cd-section:nth-child(2) { animation-delay: 0.30s; }
+
+/* ---- Candidates list states (loading / empty / error / no-match) ---- */
+.cand-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 14px;
+    padding: 56px 24px;
+    margin-top: 8px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.7);
+}
+.cand-state[hidden] { display: none; }
+.cand-state h4 {
+    margin: 0;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 600;
+}
+.cand-state p {
+    margin: 0;
+    max-width: 380px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.55);
+}
+.cand-state .cand-state-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(0, 240, 255, 0.08);
+    display: grid;
+    place-items: center;
+    color: var(--neon-cyan);
+}
+.cand-state .cand-state-icon.error {
+    background: rgba(255, 75, 75, 0.10);
+    color: #ff4b4b;
+}
+.cand-state .cand-state-icon i {
+    width: 26px;
+    height: 26px;
+}
+.cand-state-loading > i {
+    width: 28px;
+    height: 28px;
+    color: var(--neon-cyan);
+}
+.cand-state .btn-retry-candidates {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.92);
+    padding: 9px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+.cand-state .btn-retry-candidates:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.cand-no-match {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 28px 16px;
+    color: rgba(255, 255, 255, 0.55);
+    border: 1px dashed rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.02);
+}
+.cand-no-match i { width: 18px; height: 18px; }
+
+/* Light-theme tuning */
+body[data-theme="light"] .cand-state {
+    background: rgba(13, 17, 23, 0.02);
+    border-color: rgba(13, 17, 23, 0.08);
+    color: rgba(13, 17, 23, 0.7);
+}
+body[data-theme="light"] .cand-state h4 { color: rgba(13, 17, 23, 0.92); }
+body[data-theme="light"] .cand-state p { color: rgba(13, 17, 23, 0.55); }
+body[data-theme="light"] .cand-state .btn-retry-candidates {
+    background: rgba(13, 17, 23, 0.04);
+    border-color: rgba(13, 17, 23, 0.12);
+    color: rgba(13, 17, 23, 0.92);
+}
+body[data-theme="light"] .cand-state .btn-retry-candidates:hover {
+    background: rgba(13, 17, 23, 0.08);
+}
+body[data-theme="light"] .cand-no-match {
+    background: rgba(13, 17, 23, 0.02);
+    border-color: rgba(13, 17, 23, 0.08);
+    color: rgba(13, 17, 23, 0.55);
+}
+
+/* Trend down indicator for insights */
+.cand-insight-trend.trend-down { color: #ff6b6b; }
+
+/* When the grid is in a non-ready state, hide the empty grid block entirely. */
+.candidates-grid[hidden] { display: none; }
+
+/* ---- Candidate Details: loading / error states ---- */
+.cd-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 14px;
+    padding: 80px 24px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.7);
+}
+.cd-state[hidden] { display: none; }
+.cd-state h4 {
+    margin: 0;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.92);
+    font-weight: 600;
+}
+.cd-state p {
+    margin: 0;
+    max-width: 420px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.55);
+}
+.cd-state .cd-state-icon {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: rgba(0, 240, 255, 0.08);
+    display: grid; place-items: center;
+    color: var(--neon-cyan);
+}
+.cd-state .cd-state-icon.error {
+    background: rgba(255, 75, 75, 0.10);
+    color: #ff4b4b;
+}
+.cd-state .cd-state-icon i { width: 26px; height: 26px; }
+.cd-state-loading > i { width: 28px; height: 28px; color: var(--neon-cyan); }
+.cd-state .btn-retry-cd {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.92);
+    padding: 9px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+.cd-state .btn-retry-cd:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Treat an "inactive" status chip differently (used when stage === rejected). */
+.cd-hero-chip:not(.cd-chip-active) .cd-chip-dot {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: none;
+}
+
+/* Empty-skill placeholder is muted so it doesn't read like a real chip. */
+.cd-skill-tag.cd-skill-empty {
+    opacity: 0.5;
+    font-style: italic;
+}
+
+/* Notes section text */
+.cd-notes-text {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.55;
+    white-space: pre-wrap;
+}
+
+/* Light-theme overrides for the new bits */
+body[data-theme="light"] .cd-state {
+    background: rgba(13, 17, 23, 0.02);
+    border-color: rgba(13, 17, 23, 0.08);
+    color: rgba(13, 17, 23, 0.7);
+}
+body[data-theme="light"] .cd-state h4 { color: rgba(13, 17, 23, 0.92); }
+body[data-theme="light"] .cd-state p  { color: rgba(13, 17, 23, 0.55); }
+body[data-theme="light"] .cd-state .btn-retry-cd {
+    background: rgba(13, 17, 23, 0.04);
+    border-color: rgba(13, 17, 23, 0.12);
+    color: rgba(13, 17, 23, 0.92);
+}
+body[data-theme="light"] .cd-state .btn-retry-cd:hover { background: rgba(13, 17, 23, 0.08); }
+body[data-theme="light"] .cd-notes-text { color: rgba(13, 17, 23, 0.75); }
+
+
